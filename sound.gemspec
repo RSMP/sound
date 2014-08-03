@@ -18,6 +18,6 @@ Gem::Specification.new do |spec|
   spec.requirements << "win32-sound, '>= 0.6.0' on Windows"
   spec.homepage = 'https://github.com/RSMP/sound'
   spec.license = 'MIT'
-  spec.extensions << 'ext/mkrf_conf.rb'
+  #spec.extensions << 'ext/mkrf_conf.rb'
   
 end
