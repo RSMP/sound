@@ -33,13 +33,18 @@ module Sound
         end
       end
     end
+    
+    def play(data = "beep boop")
+      write(data)
+      flush
+    end
   
     def write(data = "beep boop")
       if closed?
         puts "cannot write to a closed device"
       else
         @queue.push(data)
-        puts "writing to device_#{id}: #{@queue.shift}"
+        puts "writing to device_#{id}_queue: #{data}"
       end
     end
     
@@ -48,7 +53,14 @@ module Sound
         puts "cannot close a closed device"
       else
         puts "device is closing now"
+        flush
         closed = true
+      end
+    end
+    
+    def flush
+      until @queue.empty?
+        puts "writing to device_#{id}: #{@queue.shift}"
       end
     end
     

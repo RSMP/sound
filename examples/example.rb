@@ -8,14 +8,22 @@ device.write(file.to_s)
 device.close
 
 # This will close the device on its own after the block finishes
-Device.open(Device::DEFAULT, "w", Format::PCM) do |device|
+Device.open(Device.new, "w", Format::PCM) do |device|
   puts "inside block"
-  device.write("")
+  data = [*"a".."g"]
+  data.each do |d|
+    device.play(d)
+  end
+  device.write("h")
+  device.write("i")
+  device.write("j")
+  device.write("k")
+  device.write("l")
 end
 
 format = Format.new
 
-Device.open(Device::DEFAULT, "w", format).write
+Device.open(Device.new, "w", format).write
 
 #file = File.open
 #file.write
