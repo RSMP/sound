@@ -5,35 +5,55 @@ module Sound
   WAVE_MAPPER = -1
   
   class Device
+  
+    attr_accessor :closed, :id
     
-    def initialize(device_id)
-      
+    def initialize(id = WAVE_MAPPER)
+      @id = id
+      closed = false
+      @queue = []
     end
   
-    DEFAULT = self.new(WAVE_MAPPER)
+    DEFAULT = self.new
   
     class << self
       # Opens a sound device for reading or writing
-      # device_id is an id of one of several devices, usually defined by a constant
+      # device is one of several devices, usually defined by a constant
       # direction is reading or writing or both
-      # format_id is MIDI vs PCM or others
+      # format is MIDI vs PCM or others
       # this method can take a block and if so closes the device after execution
-      def open(device = Device.new(WAVE_MAPPER), direction = "w", format = Format.new(WAVE_FORMAT_PCM), &block)
+      def open(device = Device::DEFAULT, direction = "w", format = Format::PCM, &block)
+        puts "opening device_#{device.id}"
         if block_given?
           block.call(device)
           device.close
         else
+          device.closed = false
           device
         end
       end
     end
   
-    def write(data)
-      
+    def write(data = "beep boop")
+      if closed?
+        puts "cannot write to a closed device"
+      else
+        @queue.push(data)
+        puts "writing to device_#{id}: #{@queue.shift}"
+      end
     end
     
     def close
-      
+      if closed?
+        puts "cannot close a closed device"
+      else
+        puts "device is closing now"
+        closed = true
+      end
+    end
+    
+    def closed?
+      closed
     end
   end
 
