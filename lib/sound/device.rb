@@ -37,7 +37,7 @@ module Sound
   
     attr_accessor :closed, :id, :handle, :format
     
-    def initialize(format = Format::PCM, direction = "w", id)
+    def initialize(format = Format::PCM, direction = "w", id = nil)
       if OS.windows?
         id ||= WAVE_MAPPER
       elsif OS.linux?
