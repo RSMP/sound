@@ -7,7 +7,7 @@ Sound.verbose = true
 
 device = Sound::Device.new
 data = Sound::Data.new(device.format)
-data.generate_sine_wave(880, 500, 1)
+data.generate_sine_wave(440, 500, 1)
 device.write data
 device.close
 
