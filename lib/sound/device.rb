@@ -162,8 +162,8 @@ module Sound
       Thread.stop if Thread.current[:stop]
       AlsaPCM::Sound.snd_pcm_writei(handle.id, data_buffer, buffer_length)
       
-      sleep 0.5
       
+      AlsaPCM::Sound.snd_pcm_drain(handle.id)
       AlsaPCM::Sound.snd_pcm_close(handle.id)
       
     end

@@ -8,6 +8,7 @@ module AlsaPCM
     
     attach_function :snd_pcm_open, [:pointer, :string, :int, :int], :int
     attach_function :snd_pcm_close, [:pointer], :int
+    attach_function :snd_pcm_drain, [:pointer], :int
     attach_function :snd_pcm_prepare, [:pointer], :int
     attach_function :snd_pcm_writen, [:pointer, :pointer, :ulong], :long
     attach_function :snd_pcm_writei, [:pointer, :pointer, :ulong], :long
