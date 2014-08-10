@@ -129,7 +129,6 @@ module Sound
       data_buffer = FFI::MemoryPointer.new(:int, data.data.size)
       data_buffer.write_array_of_int data.data
       buffer_length = format.avg_bps*data.duration/1000
-      puts buffer_length
       header = Win32::WAVEHDR.new(data_buffer, buffer_length)
       Win32::Sound.waveOutPrepareHeader(handle.id, header.pointer, header.size)
       Thread.stop if Thread.current[:stop]

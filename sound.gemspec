@@ -2,7 +2,7 @@
 Gem::Specification.new do |spec|
 
   spec.name = 'sound'
-  spec.version = '0.0.5'
+  spec.version = '0.0.6'
   spec.date = '2014-08-10'
   spec.summary = 'cross-platform sound library wrapper'
   spec.description = 'Allows for effiecent cross-platform sound libraries in pure Ruby by tapping into native libraries.'
