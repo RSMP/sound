@@ -14,7 +14,9 @@ And then in irb or some script:
     device.write data
     device.close
     
-This will work on both windows and linux.
+This will work on both windows and linux.  However Linux platforms will need
+to install the libasound and libasound-dev packages.  You may already have
+these installed.
 
 Come back for more features in the future including more data
 types (loading from files, other wave types), and new formats (midi).
