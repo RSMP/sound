@@ -106,7 +106,7 @@ module Sound
       if OS.windows?
         windows_write_thread(data)
       else
-        warn("playback is not yet supported on this platform")
+        warn("warning: playback is not yet supported on this platform")
       end
     end
     
