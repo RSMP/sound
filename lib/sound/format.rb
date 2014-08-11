@@ -5,8 +5,10 @@ module Sound
   WAVE_FORMAT_PCM = 1
   
   class Format
-    attr_accessor :channels, :sample_rate, :bps
-    def initialize(format_type = WAVE_FORMAT_PCM)
+  
+    PCM = WAVE_FORMAT_PCM
+    attr_accessor :channels, :sample_rate, :bps, :alsa_format
+    def initialize(format_type = PCM)
       @channels = 1
       @sample_rate = 44100
       @bps = 16
@@ -32,7 +34,6 @@ module Sound
         @wfx.pointer
       end
     end
-    PCM = self.new
   end
   
 end

@@ -37,19 +37,27 @@ module Sound
   
     attr_accessor :closed, :id, :handle, :format
     
-    def initialize(format = Format::PCM, direction = "w", id = nil)
+    def initialize(direction = "w", id = nil, &block)
+      
       if OS.windows?
         id ||= WAVE_MAPPER
       elsif OS.linux?
         id ||= "default"
       end
+      
       @id = id
-      closed = false
+      @closed = false
       @queue = []
       @mutex = Mutex.new
-      @handle = Device::Handle.new
-      @format = format
       @direction = direction
+      
+      puts "opening device: '#{id}'" if Sound.verbose
+      
+      if block_given?
+        block.call(self)
+        close
+      end
+      
     end
   
     class << self
@@ -58,9 +66,8 @@ module Sound
       # direction is reading or writing or both
       # format is MIDI vs PCM or others
       # this method can take a block and if so closes the device after execution
-      def open(device = Device::DEFAULT, direction = "w", format = Format::PCM, &block)
-        device.format = format
-        puts "opening device_#{device.id}" if Sound.verbose
+      def open(device = Device.new, direction = "w", &block)
+        puts "opening device: '#{device.id}'" if Sound.verbose
         if block_given?
           block.call(device)
           device.close
@@ -82,10 +89,11 @@ module Sound
       else
         @mutex.lock
         @queue << Thread.new do
-          write_thread(data)
+          Thread.current[:data] = data
+          write_thread
         end
         @mutex.unlock
-        puts "writing to device_#{id}_queue: #{data.class}" if Sound.verbose
+        puts "writing to queue of device '#{id}': #{data.class}" if Sound.verbose
       end
     end
     
@@ -94,7 +102,7 @@ module Sound
         puts "cannot close a closed device"
       else
         flush
-        puts "device is closing now" if Sound.verbose
+        puts "device '#{id}' is closing now" if Sound.verbose
         closed = true
       end
     end
@@ -103,7 +111,7 @@ module Sound
       until @queue.empty?
         output = @queue.shift
         output[:stop] = false
-        puts "writing to device_#{id}: #{output}" if Sound.verbose
+        puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
         output.run.join
       end
     end
@@ -112,24 +120,19 @@ module Sound
       closed
     end
     
-    def write_thread(data)
+    def write_thread
       Thread.current[:stop] = true if Thread.current[:stop].nil?
       if OS.windows?
-        windows_write_thread(data)
+        windows_write_thread
       elsif OS.linux?
-        linux_write_thread(data)
+        linux_write_thread
       else
         warn("warning: playback is not yet supported on this platform")
       end
     end
     
-    def windows_write_thread(data)
-      handle = Handle.new
-      Win32::Sound.waveOutOpen(handle.pointer, id, format.pointer, 0, 0, 0)
-      data_buffer = FFI::MemoryPointer.new(:int, data.data.size)
-      data_buffer.write_array_of_int data.data
-      buffer_length = format.avg_bps*data.duration/1000
-      header = Win32::WAVEHDR.new(data_buffer, buffer_length)
+    def windows_write_thread
+      Win32::Sound.waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
       Win32::Sound.waveOutPrepareHeader(handle.id, header.pointer, header.size)
       Thread.stop if Thread.current[:stop]
       Win32::Sound.waveOutWrite(handle.id, header.pointer, header.size)
@@ -139,32 +142,51 @@ module Sound
       Win32::Sound.waveOutClose(handle.id)
     end
     
-    def linux_write_thread(data)
-      handle = Handle.new
-      AlsaPCM::Sound.snd_pcm_open(handle.pointer, id, 0, 0)
-      data_buffer = FFI::MemoryPointer.new(:int, data.data.size)
-      data_buffer.write_array_of_int data.data
-      buffer_length = data_buffer.size/2
+    def linux_write_thread
+      ALSA::PCM.open(handle.pointer, id, 0, 0)
+      
+      buffer_size = data_buffer.size/2
+      
       params = FFI::MemoryPointer.new(:pointer)
-      AlsaPCM::Sound.snd_pcm_hw_params_malloc(params)
-      AlsaPCM::Sound.snd_pcm_hw_params_any(handle.id, params.read_pointer)
       
-      AlsaPCM::Sound.snd_pcm_hw_params_set_access(handle.id, params.read_pointer, 3)
-      AlsaPCM::Sound.snd_pcm_hw_params_set_format(handle.id, params.read_pointer, 2)
-      AlsaPCM::Sound.snd_pcm_hw_params_set_rate(handle.id, params.read_pointer, 44100, 0)
-      AlsaPCM::Sound.snd_pcm_hw_params_set_channels(handle.id, params.read_pointer, 1)
+      ALSA::PCM.params_malloc(params)
+      ALSA::PCM.params_any(handle.id, params.read_pointer)
       
-      AlsaPCM::Sound.snd_pcm_hw_params(handle.id, params.read_pointer)
-      AlsaPCM::Sound.snd_pcm_hw_params_free(params.read_pointer)
+      ALSA::PCM.set_access(handle.id, params.read_pointer, ALSA::SND_PCM_ACCESS_RW_INTERLEAVED)
+      ALSA::PCM.set_format(handle.id, params.read_pointer, ALSA::SND_PCM_FORMAT_S16_LE)
+      ALSA::PCM.set_rate(handle.id, params.read_pointer, data.format.sample_rate, 0)
+      ALSA::PCM.set_channels(handle.id, params.read_pointer, 1)
       
-      AlsaPCM::Sound.snd_pcm_prepare(handle.id)
+      ALSA::PCM.save_params(handle.id, params.read_pointer)
+      ALSA::PCM.free_params(params.read_pointer)
+      
+      ALSA::PCM.prepare(handle.id)
       Thread.stop if Thread.current[:stop]
-      AlsaPCM::Sound.snd_pcm_writei(handle.id, data_buffer, buffer_length)
+      ALSA::PCM.write_interleaved(handle.id, data_buffer, buffer_size)
       
+      ALSA::PCM.drain(handle.id)
+      ALSA::PCM.close(handle.id)
       
-      AlsaPCM::Sound.snd_pcm_drain(handle.id)
-      AlsaPCM::Sound.snd_pcm_close(handle.id)
-      
+    end
+    
+    def data_buffer
+      Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
+    end
+    
+    def buffer_length
+      Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
+    end
+    
+    def handle
+      Thread.current[:handle] ||= Handle.new
+    end
+    
+    def data
+      Thread.current[:data]
+    end
+    
+    def header
+      Thread.current[:header] ||= Win32::WAVEHDR.new(data_buffer, buffer_length)
     end
   end
 
