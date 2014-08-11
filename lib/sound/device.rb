@@ -140,7 +140,11 @@ module Sound
     end
     
     def buffer_length
-      Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
+      if OS.windows?
+        Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
+      elsif OS.linux?
+        Thread.current[:buffer_length] ||= data_buffer.size/2
+      end
     end
     
     def handle
@@ -168,7 +172,7 @@ module Sound
         Win32::Sound.waveOutPrepareHeader(handle.id, header.pointer, header.size)
       elsif OS.linux?
       
-        buffer_size = data_buffer.size/2
+        buffer_length
         
         params = FFI::MemoryPointer.new(:pointer)
         
@@ -192,7 +196,7 @@ module Sound
       if OS.windows?
         Win32::Sound.waveOutWrite(handle.id, header.pointer, header.size)
       elsif OS.linux?
-        ALSA::PCM.write_interleaved(handle.id, data_buffer, buffer_size)
+        ALSA::PCM.write_interleaved(handle.id, data_buffer, buffer_length)
       end
     end
     
