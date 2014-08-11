@@ -4,8 +4,10 @@ module ALSA
 
   SND_PCM_STREAM_PLAYBACK = 0
   SND_PCM_STREAM_CAPTURE = 1
+  
 
   class PCM
+  
     extend FFI::Library
     ffi_lib 'asound'
     ffi_convention :stdcall
@@ -25,6 +27,8 @@ module ALSA
     attach_function :save_params, :snd_pcm_hw_params, [:pointer, :pointer], :int
     attach_function :free_params, :snd_pcm_hw_params_free, [:pointer], :void
     
+    SND_PCM_ASYNC = 2
+    ASYNC = SND_PCM_ASYNC
     #snd_pcm formats
     # Unknown 
     SND_PCM_FORMAT_UNKNOWN = -1

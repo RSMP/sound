@@ -89,11 +89,38 @@ module Sound
       else
         @mutex.lock
         @queue << Thread.new do
+          Thread.current[:async] = false
           Thread.current[:data] = data
           write_thread
         end
         @mutex.unlock
-        puts "writing to queue of device '#{id}': #{data.class}" if Sound.verbose
+        puts "writing to queue of device '#{id}': #{data}" if Sound.verbose
+      end
+    end
+    
+    def write_async(data = "beep boop", new_queue_elem = false)
+      if closed?
+        puts "cannot write to a closed device"
+      else
+        @mutex.lock
+        if new_queue_elem || @queue.empty? || @queue.last.kind_of?(Thread)
+          threads = []
+          threads << Thread.new do
+            Thread.current[:async] = true
+            Thread.current[:data] = data
+            write_thread
+            Thread.pass
+          end
+          @queue << threads
+        else
+          @queue.last << Thread.new do
+            Thread.current[:data] = data
+            write_thread
+            Thread.pass
+          end
+        end
+        @mutex.unlock
+        puts "writing async to queue of device '#{id}': #{data}" if Sound.verbose
       end
     end
     
@@ -110,9 +137,18 @@ module Sound
     def flush
       until @queue.empty?
         output = @queue.shift
-        output[:stop] = false
-        puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
-        output.run.join
+        if output.kind_of? Thread
+          output[:stop] = false
+          puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
+          output.run.join
+        else
+          output.each do |thread|
+            thread[:stop] = false
+            puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose
+            thread.run
+          end
+          output.last.join if output.last.alive?
+        end
       end
     end
     
@@ -135,35 +171,11 @@ module Sound
       end
     end
     
-    def data_buffer
-      Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
-    end
-    
-    def buffer_length
-      if OS.windows?
-        Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
-      elsif OS.linux?
-        Thread.current[:buffer_length] ||= data_buffer.size/2
-      end
-    end
-    
-    def handle
-      Thread.current[:handle] ||= Handle.new
-    end
-    
-    def data
-      Thread.current[:data]
-    end
-    
-    def header
-      Thread.current[:header] ||= Win32::WAVEHDR.new(data_buffer, buffer_length)
-    end
-    
     def open_device
       if OS.windows?
         Win32::Sound.waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
       elsif OS.linux?
-        ALSA::PCM.open(handle.pointer, id, 0, 0)
+        ALSA::PCM.open(handle.pointer, id, 0, ALSA::PCM::ASYNC)
       end
     end
     
@@ -201,14 +213,45 @@ module Sound
     end
     
     def close_device
+      wait_for_sounds_to_finish
+      if OS.windows?
+        Win32::Sound.waveOutClose(handle.id)
+      elsif OS.linux?
+        ALSA::PCM.close(handle.id)
+      end
+    end
+    
+    def handle
+      Thread.current[:handle] ||= Handle.new
+    end
+    
+    def data
+      Thread.current[:data]
+    end
+    
+    def header
+      Thread.current[:header] ||= Win32::WAVEHDR.new(data_buffer, buffer_length)
+    end
+    
+    def data_buffer
+      Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
+    end
+    
+    def buffer_length
+      if OS.windows?
+        Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
+      elsif OS.linux?
+        Thread.current[:buffer_length] ||= data_buffer.size/2
+      end
+    end
+    
+    def wait_for_sounds_to_finish
       if OS.windows?
         while Win32::Sound.waveOutUnprepareHeader(handle.id, header.pointer, header.size) == 33
           sleep 0.001
         end
-        Win32::Sound.waveOutClose(handle.id)
       elsif OS.linux?
         ALSA::PCM.drain(handle.id)
-        ALSA::PCM.close(handle.id)
       end
     end
   end

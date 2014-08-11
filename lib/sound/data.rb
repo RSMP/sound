@@ -7,6 +7,9 @@ module Sound
       @format = format
       @pcm_data = []
     end
+    def to_s
+      puts "#<Sound::Data:#{object_id}>"
+    end
     def generate_sine_wave(freq, duration, volume)
       @pcm_data = []
       @duration = duration
@@ -31,6 +34,7 @@ module Sound
 
       self
     end
+    alias :sine_wave :generate_sine_wave
   end
   
 end
