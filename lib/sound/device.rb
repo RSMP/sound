@@ -59,6 +59,10 @@ module Sound
       end
       
     end
+    
+    def open?
+      !closed
+    end
   
     class << self
       # Opens a sound device for reading or writing
@@ -130,7 +134,7 @@ module Sound
       else
         flush
         puts "device '#{id}' is closing now" if Sound.verbose
-        closed = true
+        self.closed = true
       end
     end
     
