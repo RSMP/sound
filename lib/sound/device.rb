@@ -2,9 +2,13 @@
 module Sound
 
   @verbose = false
+  @testing = false
   
   class << self
-    attr_accessor :verbose
+    attr_accessor :verbose, :testing
+    def testing?
+      testing
+    end
   end
   
   WAVE_MAPPER = -1
@@ -101,7 +105,9 @@ module Sound
         @queue << Thread.new do
           Thread.current[:async] = false
           Thread.current[:data] = data
-          write_thread
+          unless Sound.testing?
+            write_thread
+          end
         end
         @mutex.unlock
         puts "writing to queue of device '#{id}': #{data}" if Sound.verbose
@@ -148,17 +154,19 @@ module Sound
     def flush
       until @queue.empty?
         output = @queue.shift
-        if output.kind_of? Thread
-          output[:stop] = false
-          puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
-          output.run.join
-        else
-          output.each do |thread|
-            thread[:stop] = false
-            puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose
-            thread.run
+        unless Sound.testing?
+          if output.kind_of? Thread
+            output[:stop] = false
+            puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
+            output.run.join
+          else
+            output.each do |thread|
+              thread[:stop] = false
+              puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose
+              thread.run
+            end
+            output.last.join if output.last.alive?
           end
-          output.last.join if output.last.alive?
         end
       end
     end
