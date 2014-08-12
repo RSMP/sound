@@ -18,6 +18,9 @@ Gem::Specification.new do |spec|
     "lib/sound/win32/sound.rb",
     "lib/sound/linux/sound.rb"
   ]
+  spec.add_runtime_dependency 'ffi'
+  spec.add_development_dependency 'rspec'
+  
   spec.homepage = 'https://github.com/RSMP/sound'
   spec.license = 'MIT'
   
