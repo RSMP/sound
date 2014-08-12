@@ -1,5 +1,6 @@
 sound
 =====
+[![Build Status](https://travis-ci.org/RSMP/sound.svg?branch=io)](https://travis-ci.org/RSMP/sound)
 
 Cross Platform sound libraries for the Ruby developer
 
