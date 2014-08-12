@@ -34,6 +34,8 @@ module Sound
         end
       end
     end
+    
+    class Buffer < Array; end
   
     attr_accessor :closed, :id, :handle, :format
     
@@ -47,7 +49,7 @@ module Sound
       
       @id = id
       @closed = false
-      @queue = []
+      @queue = Device::Buffer.new
       @mutex = Mutex.new
       @direction = direction
       
@@ -62,6 +64,10 @@ module Sound
     
     def open?
       !closed
+    end
+    
+    def queue
+      @queue.dup.freeze
     end
   
     class << self
@@ -100,6 +106,7 @@ module Sound
         @mutex.unlock
         puts "writing to queue of device '#{id}': #{data}" if Sound.verbose
       end
+      self
     end
     
     def write_async(data = "beep boop", new_queue_elem = false)
