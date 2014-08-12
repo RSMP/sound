@@ -10,4 +10,4 @@ branches:
     - master
     - io
 before_install:
-  - sudo apt-get install libasound libasound-dev
+  - sudo apt-get install libasound2 libasound2-dev
