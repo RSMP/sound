@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if OS.linux?
-  describe Sound::ALSA::PCM do
+  describe Sound::ALSA do
     
   end
 end

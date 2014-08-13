@@ -38,7 +38,7 @@ module Sound
     
     def open_device
       begin
-        snd_pcm_open(handle.pointer, id, 0, ALSA::PCM::ASYNC)
+        snd_pcm_open(handle.pointer, id, 0, ASYNC)
       rescue NoDeviceError
         Sound.no_device = true
       end
@@ -51,8 +51,8 @@ module Sound
       snd_pcm_hw_params_malloc(params_handle.pointer)
       snd_pcm_hw_params_any(handle.id, params_handle.id)
       
-      snd_pcm_hw_params_set_access(handle.id, params_handle.id, ALSA::PCM::SND_PCM_ACCESS_RW_INTERLEAVED)
-      set_formsnd_pcm_hw_params_set_formatat(handle.id, params_handle.id, ALSA::PCM::SND_PCM_FORMAT_S16_LE)
+      snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
+      set_formsnd_pcm_hw_params_set_formatat(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
       # need to change this to set_rate_near at some point
       snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
       snd_pcm_hw_params_set_channels(handle.id, params_handle.id, 1)
@@ -77,11 +77,11 @@ module Sound
     end
     
     def handle
-      Thread.current[:handle] ||= Handle.new
+      Thread.current[:handle] ||= Device::Handle.new
     end
     
     def params_handle
-      Thread.current[:params_handle] ||= Handle.new
+      Thread.current[:params_handle] ||= Device::Handle.new
     end
     
     def data
