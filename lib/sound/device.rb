@@ -1,17 +1,5 @@
 
 module Sound
-
-  @verbose = false
-  @no_device = false
-  
-  class << self
-    attr_accessor :verbose, :no_device
-  end
-  
-  WAVE_MAPPER = -1
-  
-  class NoDeviceError < RuntimeError; end
-  class NoDependencyError < RuntimeError; end
   
   class Device
     
@@ -41,7 +29,7 @@ module Sound
     
     class Buffer < Array; end
   
-    attr_accessor :closed, :id, :handle, :format
+    attr_accessor :closed, :id, :format
     
     def initialize(direction = "w", id = nil, &block)
       if OS.windows?
@@ -174,7 +162,7 @@ module Sound
     
     def write_thread
       Thread.current[:stop] = true if Thread.current[:stop].nil?
-      if OS.windows? || OS.linux?
+      if Sound.platform_supported
         open_device
         unless Sound.no_device
           prepare_buffer
@@ -182,100 +170,11 @@ module Sound
         Thread.stop if Thread.current[:stop]
         unless Sound.no_device
           write_to_device
+          unprepare_buffer
           close_device
         end
       else
         warn("warning: playback is not yet supported on this platform")
-      end
-    end
-    
-    def open_device
-      if OS.windows?
-        Win32::Sound.waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
-      elsif OS.linux?
-        begin
-          ALSA::PCM.open(handle.pointer, id, 0, ALSA::PCM::ASYNC)
-        rescue NoDeviceError
-          Sound.no_device = true
-        end
-      end
-    end
-    
-    def prepare_buffer
-      if OS.windows?
-        Win32::Sound.waveOutPrepareHeader(handle.id, header.pointer, header.size)
-      elsif OS.linux?
-      
-        buffer_length
-        
-        ALSA::PCM.params_malloc(params_handle.pointer)
-        ALSA::PCM.params_any(handle.id, params_handle.id)
-        
-        ALSA::PCM.set_access(handle.id, params_handle.id, ALSA::PCM::SND_PCM_ACCESS_RW_INTERLEAVED)
-        ALSA::PCM.set_format(handle.id, params_handle.id, ALSA::PCM::SND_PCM_FORMAT_S16_LE)
-        ALSA::PCM.set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
-        ALSA::PCM.set_channels(handle.id, params_handle.id, 1)
-        
-        ALSA::PCM.save_params(handle.id, params_handle.id)
-        ALSA::PCM.free_params(params_handle.id)
-        
-        ALSA::PCM.prepare(handle.id)
-        
-      end
-    end
-    
-    def write_to_device
-      if OS.windows?
-        Win32::Sound.waveOutWrite(handle.id, header.pointer, header.size)
-      elsif OS.linux?
-        ALSA::PCM.write_interleaved(handle.id, data_buffer, buffer_length)
-      end
-    end
-    
-    def close_device
-      wait_for_sounds_to_finish
-      if OS.windows?
-        Win32::Sound.waveOutClose(handle.id)
-      elsif OS.linux?
-        ALSA::PCM.close(handle.id)
-      end
-    end
-    
-    def handle
-      Thread.current[:handle] ||= Handle.new
-    end
-    
-    def params_handle
-      Thread.current[:params_handle] ||= Handle.new
-    end
-    
-    def data
-      Thread.current[:data]
-    end
-    
-    def header
-      Thread.current[:header] ||= Win32::WAVEHDR.new(data_buffer, buffer_length)
-    end
-    
-    def data_buffer
-      Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
-    end
-    
-    def buffer_length
-      if OS.windows?
-        Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
-      elsif OS.linux?
-        Thread.current[:buffer_length] ||= data_buffer.size/2
-      end
-    end
-    
-    def wait_for_sounds_to_finish
-      if OS.windows?
-        while Win32::Sound.waveOutUnprepareHeader(handle.id, header.pointer, header.size) == 33
-          sleep 0.001
-        end
-      elsif OS.linux?
-        ALSA::PCM.drain(handle.id)
       end
     end
   end

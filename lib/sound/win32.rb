@@ -2,24 +2,63 @@
 module Sound
   module Win32
 
-    class Sound
-      extend FFI::Library
+    extend FFI::Library
 
-      typedef :ulong, :dword
-      typedef :uintptr_t, :hwaveout
-      typedef :uint, :mmresult
-      
-      ffi_lib :winmm
+    typedef :ulong, :dword
+    typedef :uintptr_t, :hwaveout
+    typedef :uint, :mmresult
     
-      attach_function :waveOutOpen, [:pointer, :uint, :pointer, :dword, :dword, :dword], :mmresult
-      attach_function :waveOutPrepareHeader, [:hwaveout, :pointer, :uint], :mmresult
-      attach_function :waveOutWrite, [:hwaveout, :pointer, :uint], :mmresult
-      attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
-      attach_function :waveOutClose, [:hwaveout], :mmresult
-      
-    end
+    ffi_lib :winmm
+  
+    attach_function :waveOutOpen, [:pointer, :uint, :pointer, :dword, :dword, :dword], :mmresult
+    attach_function :waveOutPrepareHeader, [:hwaveout, :pointer, :uint], :mmresult
+    attach_function :waveOutWrite, [:hwaveout, :pointer, :uint], :mmresult
+    attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
+    attach_function :waveOutClose, [:hwaveout], :mmresult
     
     WAVE_FORMAT_PCM = 1
+    
+    def open_device
+      waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
+    end
+    
+    def prepare_buffer
+      waveOutPrepareHeader(handle.id, header.pointer, header.size)
+    end
+    
+    def write_to_device
+      waveOutWrite(handle.id, header.pointer, header.size)
+    end
+    
+    def unprepare_buffer
+      while waveOutUnprepareHeader(handle.id, header.pointer, header.size) == 33
+        sleep 0.001
+      end
+    end
+    
+    def close_device
+      waveOutClose(handle.id)
+    end
+    
+    def handle
+      Thread.current[:handle] ||= Device::Handle.new
+    end
+    
+    def data
+      Thread.current[:data]
+    end
+    
+    def header
+      Thread.current[:header] ||= Win32::WAVEHDR.new(data_buffer, buffer_length)
+    end
+    
+    def data_buffer
+      Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
+    end
+    
+    def buffer_length
+      Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
+    end
     
     # Define an HWAVEOUT struct for use by all the waveOut functions.
     # It is a handle to a waveOut stream, so starting up multiple
