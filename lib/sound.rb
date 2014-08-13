@@ -41,6 +41,9 @@ elsif OS.linux?
     class Device
       include DeviceInterface::ALSA
     end
+    class Format
+      include FormatInterface::ALSA
+    end
   end
   Sound.platform_supported = true
 else
