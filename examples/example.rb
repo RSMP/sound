@@ -126,8 +126,14 @@ threads.each {|t| t.join}
 #example of asynchronous playback
 
 Sound::Device.new do |device|
-  device.write_async Sound::Data.new.sine_wave(440, 500, 1)
-  device.write_async Sound::Data.new.sine_wave(660, 500, 1)
+  device.write_async Sound::Data.new.sine_wave(440, 300, 1)
+  device.write_async Sound::Data.new.sine_wave(660, 300, 1)
+  device.write Sound::Data.new.sine_wave(660, 300, 1)
+  device.write_async Sound::Data.new.sine_wave(440, 300, 1), true
+  device.write_async Sound::Data.new.sine_wave(880, 300, 1)
+  device.write_async Sound::Data.new.sine_wave(440, 300, 1), true
+  device.write_async Sound::Data.new.sine_wave(880*2**(4/12.0), 300, 1)
+  
 end
 
 threads = []

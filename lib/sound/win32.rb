@@ -1,6 +1,19 @@
+require 'ffi'
 
 module Sound
   module Win32
+    
+    class Handle
+      def initialize
+        @handle = HWAVEOUT.new
+      end
+      def pointer
+        @handle.pointer
+      end
+      def id
+        @handle[:i]
+      end
+    end
 
     extend FFI::Library
 
@@ -17,6 +30,8 @@ module Sound
     attach_function :waveOutClose, [:hwaveout], :mmresult
     
     WAVE_FORMAT_PCM = 1
+    WAVE_MAPPER = -1
+    DEFAULT_DEVICE_ID = WAVE_MAPPER
     
     def open_device
       waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
@@ -41,7 +56,7 @@ module Sound
     end
     
     def handle
-      Thread.current[:handle] ||= Device::Handle.new
+      Thread.current[:handle] ||= Handle.new
     end
     
     def data
@@ -49,7 +64,7 @@ module Sound
     end
     
     def header
-      Thread.current[:header] ||= Win32::WAVEHDR.new(data_buffer, buffer_length)
+      Thread.current[:header] ||= WAVEHDR.new(data_buffer, buffer_length)
     end
     
     def data_buffer

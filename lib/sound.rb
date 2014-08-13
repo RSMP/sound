@@ -13,8 +13,6 @@ module Sound
     attr_accessor :verbose, :no_device, :platform_supported
   end
   
-  WAVE_MAPPER = -1
-  
   class NoDeviceError < RuntimeError; end
   class NoDependencyError < RuntimeError; end
   

@@ -2,9 +2,22 @@ require 'ffi'
 
 module Sound
   module ALSA
+    
+    class Handle
+      def initialize
+        @handle = FFI::MemoryPointer.new(:pointer)
+      end
+      def pointer
+        @handle
+      end
+      def id
+        @handle.read_pointer
+      end
+    end
 
     SND_PCM_STREAM_PLAYBACK = 0
     SND_PCM_STREAM_CAPTURE = 1
+    DEFAULT_DEVICE_ID = "default"
     
     extend FFI::Library
     ffi_lib 'asound'
@@ -30,7 +43,7 @@ module Sound
       if output.match(/no soundcard/m)
         raise NoDeviceError, "No sound devices present"
       elsif output.match(/not found/m)
-        raise NoDependencyError, "aplay is not present in your environment"
+        raise NoDependencyError, "aplay is not present in your environment. Install alsa-utils package for audio playback."
       else
         snd_pcm_open(*args)
       end
@@ -46,42 +59,44 @@ module Sound
     
     def prepare_buffer
       
-      buffer_length
+      unless Sound.no_device
+        buffer_length
+        
+        snd_pcm_hw_params_malloc(params_handle.pointer)
+        snd_pcm_hw_params_any(handle.id, params_handle.id)
+        
+        snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
+        set_formsnd_pcm_hw_params_set_formatat(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
+        # need to change this to set_rate_near at some point
+        snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
+        snd_pcm_hw_params_set_channels(handle.id, params_handle.id, 1)
+        
+        snd_pcm_hw_params(handle.id, params_handle.id)
+        snd_pcm_hw_params_free(params_handle.id)
+        
+        snd_pcm_prepare(handle.id)
+      end
       
-      snd_pcm_hw_params_malloc(params_handle.pointer)
-      snd_pcm_hw_params_any(handle.id, params_handle.id)
-      
-      snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
-      set_formsnd_pcm_hw_params_set_formatat(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
-      # need to change this to set_rate_near at some point
-      snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
-      snd_pcm_hw_params_set_channels(handle.id, params_handle.id, 1)
-      
-      snd_pcm_hw_params(handle.id, params_handle.id)
-      snd_pcm_hw_params_free(params_handle.id)
-      
-      snd_pcm_prepare(handle.id)
-    
     end
     
     def write_to_device
-      snd_pcm_writei(handle.id, data_buffer, buffer_length)
+      snd_pcm_writei(handle.id, data_buffer, buffer_length) unless Sound.no_device
     end
     
     def unprepare_buffer
-      snd_pcm_drain(handle.id)
+      snd_pcm_drain(handle.id) unless Sound.no_device
     end
     
     def close_device
-      snd_pcm_close(handle.id)
+      snd_pcm_close(handle.id) unless Sound.no_device
     end
     
     def handle
-      Thread.current[:handle] ||= Device::Handle.new
+      Thread.current[:handle] ||= Handle.new
     end
     
     def params_handle
-      Thread.current[:params_handle] ||= Device::Handle.new
+      Thread.current[:params_handle] ||= Handle.new
     end
     
     def data
