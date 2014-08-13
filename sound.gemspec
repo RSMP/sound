@@ -2,8 +2,8 @@
 Gem::Specification.new do |spec|
 
   spec.name = 'sound'
-  spec.version = '0.0.6'
-  spec.date = '2014-08-10'
+  spec.version = '0.0.7'
+  spec.date = '2014-08-13'
   spec.summary = 'cross-platform sound library wrapper'
   spec.description = 'Allows for effiecent cross-platform sound libraries in pure Ruby by tapping into native libraries.'
   spec.authors = ["Dominic Muller"]
@@ -15,8 +15,8 @@ Gem::Specification.new do |spec|
     "lib/sound/data.rb",
     "lib/sound/device.rb",
     "lib/sound/format.rb",
-    "lib/sound/win32/sound.rb",
-    "lib/sound/linux/sound.rb"
+    "lib/sound/win32.rb",
+    "lib/sound/alsa.rb"
   ]
   spec.add_runtime_dependency 'ffi'
   spec.add_development_dependency 'rspec'

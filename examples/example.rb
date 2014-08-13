@@ -48,7 +48,7 @@ device.close
 
 Sound::Device.new {|d| d.play Sound::Data.new.sine_wave(440, 500, 1)}
 
-# Let's play a little melody!
+# Let's play a little melody!  It starts to get out of sync about halfway through
 
 threads = []
 

@@ -3,3 +3,4 @@ gemspec
 
 gem 'rake'
 gem 'pry'
+gem 'coveralls', require: false
