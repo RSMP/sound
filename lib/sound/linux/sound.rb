@@ -129,7 +129,7 @@ module Sound
         if output.match(/no soundcard/m)
           raise NoDeviceError, "No sound devices present"
         else
-          snd_pcm_open(args)
+          snd_pcm_open(*args)
         end
       end
     end
