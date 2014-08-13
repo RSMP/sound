@@ -1,11 +1,12 @@
 require 'ffi'
+require 'sound/device_interface/base'
 
 module Sound
   module DeviceInterface
     module Win32
-      include DeviceInterface
+      include DeviceInterface::Base
       
-      class DeviceInterface::Handle
+      class Base::Handle
         def initialize
           @handle = HWAVEOUT.new
         end
@@ -31,7 +32,6 @@ module Sound
       attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutClose, [:hwaveout], :mmresult
       
-      WAVE_FORMAT_PCM = 1
       WAVE_MAPPER = -1
       DEFAULT_DEVICE_ID = WAVE_MAPPER
       
@@ -73,37 +73,6 @@ module Sound
       #
       class HWAVEOUT < FFI::Struct
         layout :i, :int
-      end
-
-      # Define WAVEFORMATEX which defines the format (PCM in this case)
-      # and various properties like sampling rate, number of channels, etc.
-      #
-      class WAVEFORMATEX < FFI::Struct
-    
-        # Initializes struct with sensible defaults for most commonly used
-        # values.  While setting these manually is possible, please be
-        # sure you know what changes will result in, as an incorrectly
-        # set struct will result in unpredictable behavior.
-        #
-        def initialize(nSamplesPerSec = 44100, wBitsPerSample = 16, nChannels = 1, cbSize = 0)
-          self[:wFormatTag] = WAVE_FORMAT_PCM
-          self[:nChannels] = nChannels
-          self[:nSamplesPerSec] = nSamplesPerSec
-          self[:wBitsPerSample] = wBitsPerSample
-          self[:cbSize] = cbSize
-          self[:nBlockAlign] = (self[:wBitsPerSample] >> 3) * self[:nChannels]
-          self[:nAvgBytesPerSec] = self[:nBlockAlign] * self[:nSamplesPerSec]
-        end
-      
-        layout(
-          :wFormatTag,      :ushort,
-          :nChannels,       :ushort,
-          :nSamplesPerSec,  :ulong,
-          :nAvgBytesPerSec, :ulong,
-          :nBlockAlign,     :ushort,
-          :wBitsPerSample,  :ushort,
-          :cbSize,          :ushort
-        )
       end
 
       #define WAVEHDR which is a header to a block of audio

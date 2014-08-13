@@ -2,7 +2,6 @@
 require 'ffi'
 require 'pry'
 require 'os/os'
-require 'sound/device_interface'
 
 module Sound
 
@@ -21,9 +20,13 @@ end
 
 if OS.windows?
   require 'sound/device_interface/win32'
+  require 'sound/format_interface/win32'
   module Sound
     class Device
       include DeviceInterface::Win32
+    end
+    class Format
+      include FormatInterface::Win32
     end
   end
   Sound.platform_supported = true
@@ -33,6 +36,7 @@ elsif OS.linux?
     warn("warning: sound output requires libasound2, libasound2-dev, and alsa-utils packages")
   end
   require 'sound/device_interface/alsa'
+  require 'sound/format_interface/alsa'
   module Sound
     class Device
       include DeviceInterface::ALSA

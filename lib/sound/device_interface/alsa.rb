@@ -68,10 +68,10 @@ module Sound
           snd_pcm_hw_params_any(handle.id, params_handle.id)
           
           snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
-          set_formsnd_pcm_hw_params_set_formatat(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
+          snd_pcm_hw_params_set_format(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
           # need to change this to set_rate_near at some point
           snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
-          snd_pcm_hw_params_set_channels(handle.id, params_handle.id, 1)
+          snd_pcm_hw_params_set_channels(handle.id, params_handle.id, data.format.channels)
           
           snd_pcm_hw_params(handle.id, params_handle.id)
           snd_pcm_hw_params_free(params_handle.id)
