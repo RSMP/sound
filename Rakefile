@@ -7,4 +7,3 @@ if defined? RSpec
   end
 end
 task default: :spec
-task test: :spec

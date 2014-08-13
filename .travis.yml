@@ -16,4 +16,4 @@ branches:
     - master
     - io
 before_install:
-  - sudo apt-get install libasound2 libasound2-dev alsa-utils
+  - sudo apt-get install libasound2 libasound2-dev

@@ -2,16 +2,15 @@
 module Sound
 
   @verbose = false
-  @testing = false
+  @no_device = false
   
   class << self
-    attr_accessor :verbose, :testing
-    def testing?
-      testing
-    end
+    attr_accessor :verbose, :no_device
   end
   
   WAVE_MAPPER = -1
+  
+  class NoDeviceError < RuntimeError; end
   
   class Device
     
@@ -44,7 +43,6 @@ module Sound
     attr_accessor :closed, :id, :handle, :format
     
     def initialize(direction = "w", id = nil, &block)
-      
       if OS.windows?
         id ||= WAVE_MAPPER
       elsif OS.linux?
@@ -105,9 +103,7 @@ module Sound
         @queue << Thread.new do
           Thread.current[:async] = false
           Thread.current[:data] = data
-          unless Sound.testing?
-            write_thread
-          end
+          write_thread
         end
         @mutex.unlock
         puts "writing to queue of device '#{id}': #{data}" if Sound.verbose
@@ -154,19 +150,17 @@ module Sound
     def flush
       until @queue.empty?
         output = @queue.shift
-        unless Sound.testing?
-          if output.kind_of? Thread
-            output[:stop] = false
-            puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
-            output.run.join
-          else
-            output.each do |thread|
-              thread[:stop] = false
-              puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose
-              thread.run
-            end
-            output.last.join if output.last.alive?
+        if output.kind_of? Thread
+          output[:stop] = false
+          puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose
+          output.run.join
+        else
+          output.each do |thread|
+            thread[:stop] = false
+            puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose
+            thread.run
           end
+          output.last.join if output.last.alive?
         end
       end
     end
@@ -181,10 +175,14 @@ module Sound
       Thread.current[:stop] = true if Thread.current[:stop].nil?
       if OS.windows? || OS.linux?
         open_device
-        prepare_buffer
+        unless Sound.no_device
+          prepare_buffer
+        end
         Thread.stop if Thread.current[:stop]
-        write_to_device
-        close_device
+        unless Sound.no_device
+          write_to_device
+          close_device
+        end
       else
         warn("warning: playback is not yet supported on this platform")
       end
@@ -194,7 +192,11 @@ module Sound
       if OS.windows?
         Win32::Sound.waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
       elsif OS.linux?
-        ALSA::PCM.open(handle.pointer, id, 0, ALSA::PCM::ASYNC)
+        begin
+          ALSA::PCM.open(handle.pointer, id, 0, ALSA::PCM::ASYNC)
+        rescue NoDeviceError
+          Sound.no_device = true
+        end
       end
     end
     
@@ -205,18 +207,16 @@ module Sound
       
         buffer_length
         
-        params = FFI::MemoryPointer.new(:pointer)
+        ALSA::PCM.params_malloc(params_handle.pointer)
+        ALSA::PCM.params_any(handle.id, params_handle.id)
         
-        ALSA::PCM.params_malloc(params)
-        ALSA::PCM.params_any(handle.id, params.read_pointer)
+        ALSA::PCM.set_access(handle.id, params_handle.id, ALSA::PCM::SND_PCM_ACCESS_RW_INTERLEAVED)
+        ALSA::PCM.set_format(handle.id, params_handle.id, ALSA::PCM::SND_PCM_FORMAT_S16_LE)
+        ALSA::PCM.set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
+        ALSA::PCM.set_channels(handle.id, params_handle.id, 1)
         
-        ALSA::PCM.set_access(handle.id, params.read_pointer, ALSA::PCM::SND_PCM_ACCESS_RW_INTERLEAVED)
-        ALSA::PCM.set_format(handle.id, params.read_pointer, ALSA::PCM::SND_PCM_FORMAT_S16_LE)
-        ALSA::PCM.set_rate(handle.id, params.read_pointer, data.format.sample_rate, 0)
-        ALSA::PCM.set_channels(handle.id, params.read_pointer, 1)
-        
-        ALSA::PCM.save_params(handle.id, params.read_pointer)
-        ALSA::PCM.free_params(params.read_pointer)
+        ALSA::PCM.save_params(handle.id, params_handle.id)
+        ALSA::PCM.free_params(params_handle.id)
         
         ALSA::PCM.prepare(handle.id)
         
@@ -242,6 +242,10 @@ module Sound
     
     def handle
       Thread.current[:handle] ||= Handle.new
+    end
+    
+    def params_handle
+      Thread.current[:params_handle] ||= Handle.new
     end
     
     def data

@@ -16,6 +16,7 @@ module Sound
       attach_function :waveOutWrite, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutClose, [:hwaveout], :mmresult
+      
     end
     
     WAVE_FORMAT_PCM = 1

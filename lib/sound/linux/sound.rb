@@ -13,7 +13,7 @@ module Sound
       ffi_lib 'asound'
       ffi_convention :stdcall
       
-      attach_function :open, :snd_pcm_open, [:pointer, :string, :int, :int], :int
+      attach_function :snd_pcm_open, [:pointer, :string, :int, :int], :int
       attach_function :close, :snd_pcm_close, [:pointer], :int
       attach_function :drain, :snd_pcm_drain, [:pointer], :int
       attach_function :prepare, :snd_pcm_prepare, [:pointer], :int
@@ -124,6 +124,14 @@ module Sound
       SND_PCM_ACCESS_RW_NONINTERLEAVED = 4
       SND_PCM_ACCESS_LAST = SND_PCM_ACCESS_RW_NONINTERLEAVED
       
+      def self.open(*args)
+        output = `aplay -l 2>&1`
+        if output.match(/no soundcard/m)
+          raise NoDeviceError, "No sound devices present"
+        else
+          snd_pcm_open(args)
+        end
+      end
     end
   end
 end

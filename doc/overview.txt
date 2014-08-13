@@ -1,0 +1,34 @@
+Device
+  Abstracts physical devices
+  it can be opened
+  it can be closed
+  it can be written to
+    in that you write to its buffer
+  it can be flushed
+    in that its buffer is flushed
+  it can be played
+    in that its buffer is written to and immediately flushed
+  you can write any Data to it
+  it has a identification
+  
+Data
+  Abstracts real world sound data
+  it can have various formats
+  it can be writte to a device
+  it can have data which corresponds to its format
+  
+Format
+  Abstracts real world data interpretation
+  it can be PCM or MIDI
+  if it's PCM
+    it has a sample rate
+    it is has some number of channels
+    it has a bit depth per sample
+    it has a bit rate per second
+  if it's MIDI
+    I have no idea what MIDI looks like
+    
+    
+Consider extending corresponding class to platform in lib/sound.rb
+so that in lib/sound/device.rb I can write open(args) instead of Win32::PCM.open
+I like this because it takes away platfrom decision logic from Sound::Device.
