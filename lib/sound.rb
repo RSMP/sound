@@ -8,7 +8,7 @@ if OS.windows?
 elsif OS.linux?
   libasound_present = !(`which aplay`.eql? "")
   unless libasound_present
-    warn("warning: sound output requires libasound2 and libasound2-dev packages")
+    warn("warning: sound output requires libasound2, libasound2-dev, and aplay packages")
   end
   require 'sound/linux/sound'
 else

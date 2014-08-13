@@ -10,7 +10,8 @@ module Sound
   
   WAVE_MAPPER = -1
   
-  class NoDeviceError < RuntimeError; end
+  class NoDeviceError < SystemCallError; end
+  class NoDependencyError < RuntimeError; end
   
   class Device
     

@@ -126,9 +126,10 @@ module Sound
       
       def self.open(*args)
         output = `aplay -l 2>&1`
-        puts output
         if output.match(/no soundcard/m)
           raise NoDeviceError, "No sound devices present"
+        elsif output.match(/not found/m)
+          raise NoDependencyError, "aplay is not present in your environment"
         else
           snd_pcm_open(*args)
         end
