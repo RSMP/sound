@@ -16,7 +16,8 @@ And then in irb or some script:
 
     require 'sound'
     device = Sound::Device.new
-    data = Sound::Data.new(device.format)
+    format = Sound::Format.new
+    data = Sound::Data.new(format)
     data.generate_sine_wave(440, 500, 1)
     device.write data
     device.close
