@@ -13,7 +13,7 @@ module Sound
       @sample_rate = 44100
       @bps = 16
       if OS.windows?
-        @wfx = Win32::WAVEFORMATEX.new
+        @wfx = DeviceInterface::Win32::WAVEFORMATEX.new
         @wfx[:wFormatTag] = format_type
         @wfx[:nChannels] = channels
         @wfx[:nSamplesPerSec] = sample_rate

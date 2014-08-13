@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 if OS.linux?
-  describe Sound::ALSA do
+  describe Sound::DeviceInterface::ALSA do
     
   end
 end
