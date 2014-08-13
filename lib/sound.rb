@@ -6,7 +6,7 @@ require 'os/os'
 if OS.windows?
   require 'sound/win32/sound'
 elsif OS.linux?
-  libasound_present = `which aplay`.eql? ""
+  libasound_present = !(`which aplay`.eql? "")
   unless libasound_present
     warn("warning: sound output requires libasound2 and libasound2-dev packages")
   end
