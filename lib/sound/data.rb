@@ -2,13 +2,16 @@
 module Sound
 
   class Data
-    attr_reader :data, :duration
-    def initialize(format)
+    attr_reader :pcm_data, :duration, :format
+    def initialize(format = Format.new)
       @format = format
-      @data = []
+      @pcm_data = []
+    end
+    def to_s
+      puts "#<Sound::Data:#{object_id}>"
     end
     def generate_sine_wave(freq, duration, volume)
-      @data = []
+      @pcm_data = []
       @duration = duration
       ramp = 200.0
       samples = (@format.sample_rate/2*duration/1000.0).floor
@@ -26,11 +29,12 @@ module Sound
           x *= (samples - sample)/ramp
         end
 
-        @data << x.floor
+        @pcm_data << x.floor
       end
 
       self
     end
+    alias :sine_wave :generate_sine_wave
   end
   
 end
