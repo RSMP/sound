@@ -6,7 +6,7 @@ module Sound
     module ALSA
       include DeviceInterface::Base
       
-      class DeviceInterface::Handle
+      class Base::Handle
         def initialize
           @handle = FFI::MemoryPointer.new(:pointer)
         end
