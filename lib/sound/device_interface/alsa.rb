@@ -3,7 +3,7 @@ require 'ffi'
 module Sound
   module DeviceInterface
     module ALSA
-      include DeviceInterface
+      include DeviceInterface::Base
       
       class DeviceInterface::Handle
         def initialize
