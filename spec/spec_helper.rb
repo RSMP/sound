@@ -1,3 +1,3 @@
-require 'sound'
 require 'coveralls'
 Coveralls.wear!
+require 'sound'
