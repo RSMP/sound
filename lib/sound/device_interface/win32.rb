@@ -31,9 +31,66 @@ module Sound
       attach_function :waveOutWrite, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutClose, [:hwaveout], :mmresult
+      callback :waveOutProc, [:hwaveout, :uint, :pointer, :ulong, :ulong], :void
+      
+      WaveOutProc = Proc.new do |hwo, uMsg, dwInstance, dwParam1, dwParam2|
+        # explicit returns in this callback will result in an error
+        case uMsg
+        when WOM_OPEN
+        when WOM_DONE
+          block_mutex.lock
+          dwInstance.write_int(dwInstance.read_int + 1)
+          block_mutex.unlock
+        when WOM_CLOSE
+        end
+      end
       
       WAVE_MAPPER = -1
       DEFAULT_DEVICE_ID = WAVE_MAPPER
+      
+      CALLBACK_FUNCTION = 0x30000
+      
+      def play_with_multiple_buffers(buffer_count = 2)
+      
+        free_blocks.write_int buffer_count
+        waveOutOpen(handle.pointer, id, data.format.pointer, WaveOutProc, free_blocks.address, CALLBACK_FUNCTION)
+      
+        data = generate_pcm_integer_array_for_freq(440, 200, 1)
+      
+        data1 = data[0...(data.length/2)]
+        data_buffer = FFI::MemoryPointer.new(:int, data1.size)
+        data_buffer.write_array_of_int data1
+        buffer_length = wfx[:nAvgBytesPerSec]*100/1000
+        header = WAVEHDR.new(data_buffer, buffer_length)
+        waveOutPrepareHeader(handle.id, header.pointer, header.size)
+        block_mutex.lock
+        free_blocks.write_int(free_blocks.read_int - 1)
+        block_mutex.unlock
+        
+        
+        data2 = data[(data.length/2)..-1]
+        data_buffer = FFI::MemoryPointer.new(:int, data2.size)
+        data_buffer.write_array_of_int data2
+        buffer_length = wfx[:nAvgBytesPerSec]*100/1000
+        header = WAVEHDR.new(data_buffer, buffer_length)
+        waveOutPrepareHeader(handle.id, header2.pointer, header2.size)
+        block_mutex.lock
+        free_blocks.write_int(free_blocks.read_int - 1)
+        block_mutex.unlock
+        
+        waveOutWrite(handle.id, header.pointer, header.size)
+        waveOutWrite(handle.id, header2.pointer, header2.size)
+        
+        until free_blocks.read_int == 2
+          sleep 0.01
+        end
+
+        waveOutUnprepareHeader(hWaveOut.id, header.pointer, header.size)
+        waveOutUnprepareHeader(hWaveOut.id, header2.pointer, header2.size)
+        
+        waveOutClose(handle.id)
+        
+      end
       
       def open_device
         waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
@@ -63,6 +120,14 @@ module Sound
       
       def buffer_length
         Thread.current[:buffer_length] ||= data.format.avg_bps*data.duration/1000
+      end
+      
+      def free_blocks
+        Thread.current[:free_blocks] ||= FFI::MemoryPointer.new(:ulong)
+      end
+      
+      def block_mutex
+        Thread.current[:block_mutex] ||= Mutex.new
       end
       
       # Define an HWAVEOUT struct for use by all the waveOut functions.
