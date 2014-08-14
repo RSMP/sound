@@ -46,7 +46,8 @@ module Sound
         if output.match(/no soundcard/m)
           raise NoDeviceError, "No sound devices present"
         elsif output.match(/not found/m)
-          raise NoDependencyError, "aplay is not present in your environment. Install alsa-utils package for audio playback."
+          raise NoDependencyError,
+            "aplay is not present in your environment. Install alsa-utils package for audio playback."
         else
           snd_pcm_open(*args)
         end
@@ -64,19 +65,7 @@ module Sound
         
         unless Sound.no_device
           buffer_length
-          
-          snd_pcm_hw_params_malloc(params_handle.pointer)
-          snd_pcm_hw_params_any(handle.id, params_handle.id)
-          
-          snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
-          snd_pcm_hw_params_set_format(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
-          # need to change this to set_rate_near at some point
-          snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
-          snd_pcm_hw_params_set_channels(handle.id, params_handle.id, data.format.channels)
-          
-          snd_pcm_hw_params(handle.id, params_handle.id)
-          snd_pcm_hw_params_free(params_handle.id)
-          
+          set_params
           snd_pcm_prepare(handle.id)
         end
         
@@ -100,6 +89,22 @@ module Sound
       
       def buffer_length
         Thread.current[:buffer_length] ||= data_buffer.size/2
+      end
+      
+      def set_params
+          
+          snd_pcm_hw_params_malloc(params_handle.pointer)
+          snd_pcm_hw_params_any(handle.id, params_handle.id)
+          
+          snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
+          snd_pcm_hw_params_set_format(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
+          # need to change this to set_rate_near at some point
+          snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
+          snd_pcm_hw_params_set_channels(handle.id, params_handle.id, data.format.channels)
+          
+          snd_pcm_hw_params(handle.id, params_handle.id)
+          snd_pcm_hw_params_free(params_handle.id)
+      
       end
       
       SND_PCM_ASYNC = 2
