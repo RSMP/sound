@@ -32,6 +32,29 @@ describe Sound::Device do
       end
     end
   end
+  describe "self.open" do
+    let(:default_device) {Sound::Device.open}
+    context "when created without a block" do
+      it "is open" do
+        expect(default_device).to be_open
+      end
+    end
+    context "when created with a block" do
+      let(:device) {Sound::Device.open {|d|}}
+      it "is closed" do
+        expect(device).to be_closed
+      end
+    end
+  end
+  describe "#open" do
+    it "should return an open device" do
+      default_device.open
+      expect(default_device).to be_open
+      default_device.close
+      default_device.open
+      expect(default_device).to be_open
+    end
+  end
   describe "@queue" do
     it "can be read" do
       expect(default_device.queue)
@@ -48,6 +71,9 @@ describe Sound::Device do
     end
     it "does not play the data" do
       expect(device.queue[0]).to be_alive
+    end
+    context "when device is closed" do
+      it "informs the user that they cannot write to a closed device"
     end
   end
   describe "#flush" do

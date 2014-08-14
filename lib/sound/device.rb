@@ -140,6 +140,7 @@ module Sound
         puts "device '#{id}' is closing now" if Sound.verbose
         @status = :closed
       end
+      self
     end
     
     # flushes each block after previous finishes.  Should make other options,
