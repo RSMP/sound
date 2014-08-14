@@ -32,6 +32,9 @@ module Sound
       attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutClose, [:hwaveout], :mmresult
       callback :waveOutProc, [:hwaveout, :uint, :pointer, :ulong, :ulong], :void
+      attach_function :midiOutOpen, [:pointer, :uint, :dword, :dword, :dword], :mmresult
+      attach_function :midiOutClose, [:uintptr_t], :mmresult
+      attach_function :midiOutShortMsg, [:uintptr_t, :ulong], :mmresult
       
       WaveOutProc = Proc.new do |hwo, uMsg, dwInstance, dwParam1, dwParam2|
         # explicit returns in this callback will result in an error
@@ -49,6 +52,22 @@ module Sound
       DEFAULT_DEVICE_ID = WAVE_MAPPER
       
       CALLBACK_FUNCTION = 0x30000
+      
+      def play_midi_notes
+        handle = FFI::MemoryPointer.new(:pointer)
+        midiOutOpen(handle, -1, 0, 0, 0)
+        sleep 1
+        midiOutShortMsg(handle.read_int, 0x007F3C90)
+        sleep 0.3
+        midiOutShortMsg(handle.read_int, 0x007F4090)
+        sleep 0.3
+        midiOutShortMsg(handle.read_int, 0x007F4390)
+        sleep 2
+        midiOutShortMsg(handle.read_int, 0x00003C90)
+        midiOutShortMsg(handle.read_int, 0x00004090)
+        midiOutShortMsg(handle.read_int, 0x00004390)
+        midiOutClose(handle.read_int)
+      end
       
       def play_with_multiple_buffers(buffer_count = 2)
       
