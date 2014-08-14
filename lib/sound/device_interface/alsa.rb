@@ -1,4 +1,5 @@
 require 'ffi'
+require 'sound/device_interface/base'
 
 module Sound
   module DeviceInterface
