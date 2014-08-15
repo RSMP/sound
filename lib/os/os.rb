@@ -21,10 +21,10 @@ module OS
   end
   
   def OS.os
-    @os ||= OS.choose_os
+    @os ||= OS.host_os
   end
   
-  def OS.choose_os
+  def OS.host_os
     case RbConfig::CONFIG['host_os']
     when /mswin|msys|mingw|cygwin|bccwin|wince|emc|emx/
       :windows
