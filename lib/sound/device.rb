@@ -3,7 +3,12 @@ module Sound
   
   class Device
     
-    class Buffer < Array; end
+    class Buffer < Array
+      attr_accessor :force
+      def new_block
+        self.force || self.empty? || self.last.kind_of?(Thread)
+      end
+    end
   
     attr_reader :status, :id
     
@@ -104,25 +109,16 @@ module Sound
     # starts up data block threads that get played back at the same time.  Need
     # to make all threads wait until others are finished preparing the buffer.
     #
-    def write_async(data = Sound::Data.new, new_queue_elem = false)
+    def write_async(data = Sound::Data.new, force_new = false)
       if closed?
-        puts "cannot write to a closed device"
+        warn("warning: cannot write to a closed device")
       else
         @mutex.lock
-        if new_queue_elem || @queue.empty? || @queue.last.kind_of?(Thread)
-          threads = []
-          threads << Thread.new do
-            Thread.current[:async] = true
-            Thread.current[:data] = data
-            write_thread
-          end
-          @queue << threads
+        @queue.force = force_new
+        if @queue.new_block
+          @queue << [new_async_thread_for(data)]
         else
-          @queue.last << Thread.new do
-            Thread.current[:async] = true
-            Thread.current[:data] = data
-            write_thread
-          end
+          @queue.last << new_async_thread_for(data)
         end
         @mutex.unlock
         puts "writing async to queue of device '#{id}': #{data}" if Sound.verbose
@@ -150,14 +146,10 @@ module Sound
       until @queue.empty?
         output = @queue.shift
         if output.kind_of? Thread
-          output[:stop] = false
-          puts "writing to device '#{id}': #{output[:data].class}" if Sound.verbose #this may be NilClass if parent thread is too fast
-          output.run.join
+          finish_up(output).join
         else
           output.each do |thread|
-            thread[:stop] = false
-            puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose
-            thread.run
+            finish_up(output)
           end
           output.last.join if output.last.alive?
         end
@@ -169,16 +161,38 @@ module Sound
     def write_thread
       Thread.current[:stop] = true if Thread.current[:stop].nil?
       if Sound.platform_supported
-        open_device
-        prepare_buffer
-        Thread.stop if Thread.current[:stop]
-        Thread.pass if Thread.current[:async]
+        set_up
         write_to_device
-        unprepare_buffer
-        close_device
+        tear_down
       else
         warn("warning: playback is not yet supported on this platform")
       end
+    end
+    
+    def set_up
+      open_device
+      prepare_buffer
+      Thread.stop if Thread.current[:stop]
+      Thread.pass if Thread.current[:async]
+    end
+    
+    def tear_down
+      unprepare_buffer
+      close_device
+    end
+    
+    def new_async_thread_for(data)
+      Thread.new do
+        Thread.current[:async] = true
+        Thread.current[:data] = data
+        write_thread
+      end
+    end
+    
+    def finish_up(thread)
+      thread[:stop] = false
+      puts "writing to device '#{id}': #{thread[:data].class}" if Sound.verbose #this may be NilClass if parent thread is too fast
+      thread.run
     end
   end
 

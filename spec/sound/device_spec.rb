@@ -144,4 +144,53 @@ describe Sound::Device do
       end
     end
   end
+  describe "#write_async" do
+    context "when queue is empty" do
+      it "adds a new array of threads to the queue" do
+        default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+        expect(default_device.queue.count).to eq 1
+        expect(default_device.queue[0].class).to eq Array
+      end
+    end
+    context "when queue contains a non-async member" do
+      it "adds a new array of threads to the queue" do
+        default_device.write Sound::Data.new.sine_wave(440, 10, 0)
+        default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+        expect(default_device.queue.count).to eq 2
+        expect(default_device.queue[0].class).to eq Thread
+        expect(default_device.queue[1].class).to eq Array
+      end
+    end
+    context "when last member of queue is async" do
+      context "when current call is forced to be new" do
+        it "adds a new array of threads to the queue" do
+          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0), true
+          expect(default_device.queue.count).to eq 2
+          expect(default_device.queue[0].class).to eq Array
+          expect(default_device.queue[1].class).to eq Array
+        end
+      end
+      context "when current call is not new" do
+        it "adds to the last member of a queue which should be an array" do
+          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+          expect(default_device.queue.count).to eq 1
+          expect(default_device.queue[0].class).to eq Array
+          expect(default_device.queue[0].count).to eq 2
+        end
+      end
+    end
+    context "when the device is closed" do
+      it "informs the user that the device is closed" do
+        @orig_stderr = $stderr
+        $stderr = StringIO.new
+        default_device.close
+        default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+        $stderr.rewind
+        expect($stderr.string.chomp).to eq "warning: cannot write to a closed device"
+        $stderr = @orig_stderr
+      end
+    end
+  end
 end
