@@ -12,7 +12,7 @@ Sound.verbose = true
 device = Sound::Device.new("w")
 
 # creates a PCM format object
-format = Sound::Format.new(Sound::Format::PCM)
+format = Sound::Format.new#(Sound::Format::PCM)
 
 # creates a new Sound Data object with a PCM format
 data = Sound::Data.new(format)

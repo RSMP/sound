@@ -1,5 +1,4 @@
 
-require 'ffi'
 require 'pry'
 require 'os/os'
 

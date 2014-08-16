@@ -1,0 +1,770 @@
+#int 	snd_async_add_pcm_handler (snd_async_handler_t **handler, snd_pcm_t *pcm, snd_async_callback_t callback, void *private_data)
+# 	Add an async handler for a PCM.
+snd_pcm_t * 	snd_async_handler_get_pcm (snd_async_handler_t *handler)
+ 	Return PCM handle related to an async handler.
+snd_pcm_sframes_t 	snd_pcm_avail (snd_pcm_t *pcm)
+ 	Return number of frames ready to be read (capture) / written (playback)
+int 	snd_pcm_avail_delay (snd_pcm_t *pcm, snd_pcm_sframes_t *availp, snd_pcm_sframes_t *delayp)
+ 	Combine snd_pcm_avail and snd_pcm_delay functions.
+snd_pcm_sframes_t 	snd_pcm_avail_update (snd_pcm_t *pcm)
+ 	Return number of frames ready to be read (capture) / written (playback)
+int 	snd_pcm_close (snd_pcm_t *pcm)
+ 	close PCM handle
+int 	snd_pcm_delay (snd_pcm_t *pcm, snd_pcm_sframes_t *delayp)
+ 	Obtain delay for a running PCM handle.
+int 	snd_pcm_drain (snd_pcm_t *pcm)
+ 	Stop a PCM preserving pending frames.
+int 	snd_pcm_drop (snd_pcm_t *pcm)
+ 	Stop a PCM dropping pending frames.
+snd_pcm_sframes_t 	snd_pcm_forward (snd_pcm_t *pcm, snd_pcm_uframes_t frames)
+ 	Move application frame position forward.
+snd_pcm_sframes_t 	snd_pcm_forwardable (snd_pcm_t *pcm)
+ 	Get safe count of frames which can be forwarded.
+int 	snd_pcm_get_params (snd_pcm_t *pcm, snd_pcm_uframes_t *buffer_size, snd_pcm_uframes_t *period_size)
+ 	Get the transfer size parameters in a simple way.
+int 	snd_pcm_htimestamp (snd_pcm_t *pcm, snd_pcm_uframes_t *avail, snd_htimestamp_t *tstamp)
+ 	Obtain last position update hi-res timestamp.
+int 	snd_pcm_hw_free (snd_pcm_t *pcm)
+ 	Remove PCM hardware configuration and free associated resources.
+int 	snd_pcm_hw_params (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Install one PCM hardware configuration chosen from a configuration space and snd_pcm_prepare it.
+int 	snd_pcm_hw_params_current (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Retreive current PCM hardware configuration chosen with snd_pcm_hw_params.
+int 	snd_pcm_hwsync (snd_pcm_t *pcm)
+ 	(DEPRECATED) Synchronize stream position with hardware
+int 	snd_pcm_info (snd_pcm_t *pcm, snd_pcm_info_t *info)
+ 	Obtain general (static) information for PCM handle.
+int 	snd_pcm_link (snd_pcm_t *pcm1, snd_pcm_t *pcm2)
+ 	Link two PCMs.
+const char * 	snd_pcm_name (snd_pcm_t *pcm)
+ 	get identifier of PCM handle
+int 	snd_pcm_nonblock (snd_pcm_t *pcm, int nonblock)
+ 	set nonblock mode
+int 	snd_pcm_open (snd_pcm_t **pcm, const char *name, snd_pcm_stream_t stream, int mode)
+ 	Opens a PCM.
+int 	snd_pcm_open_lconf (snd_pcm_t **pcm, const char *name, snd_pcm_stream_t stream, int mode, snd_config_t *lconf)
+ 	Opens a PCM using local configuration.
+int 	snd_pcm_pause (snd_pcm_t *pcm, int enable)
+ 	Pause/resume PCM.
+int 	snd_pcm_poll_descriptors (snd_pcm_t *pcm, struct pollfd *pfds, unsigned int space)
+ 	get poll descriptors
+int 	snd_pcm_poll_descriptors_count (snd_pcm_t *pcm)
+ 	get count of poll descriptors for PCM handle
+int 	snd_pcm_poll_descriptors_revents (snd_pcm_t *pcm, struct pollfd *pfds, unsigned int nfds, unsigned short *revents)
+ 	get returned events from poll descriptors
+int 	snd_pcm_prepare (snd_pcm_t *pcm)
+ 	Prepare PCM for use.
+snd_pcm_sframes_t 	snd_pcm_readi (snd_pcm_t *pcm, void *buffer, snd_pcm_uframes_t size)
+ 	Read interleaved frames from a PCM.
+snd_pcm_sframes_t 	snd_pcm_readn (snd_pcm_t *pcm, void **bufs, snd_pcm_uframes_t size)
+ 	Read non interleaved frames to a PCM.
+int 	snd_pcm_recover (snd_pcm_t *pcm, int err, int silent)
+ 	Recover the stream state from an error or suspend.
+int 	snd_pcm_reset (snd_pcm_t *pcm)
+ 	Reset PCM position.
+int 	snd_pcm_resume (snd_pcm_t *pcm)
+ 	Resume from suspend, no samples are lost.
+snd_pcm_sframes_t 	snd_pcm_rewind (snd_pcm_t *pcm, snd_pcm_uframes_t frames)
+ 	Move application frame position backward.
+snd_pcm_sframes_t 	snd_pcm_rewindable (snd_pcm_t *pcm)
+ 	Get safe count of frames which can be rewinded.
+int 	snd_pcm_set_params (snd_pcm_t *pcm, snd_pcm_format_t format, snd_pcm_access_t access, unsigned int channels, unsigned int rate, int soft_resample, unsigned int latency)
+ 	Set the hardware and software parameters in a simple way.
+int 	snd_pcm_start (snd_pcm_t *pcm)
+ 	Start a PCM.
+snd_pcm_state_t 	snd_pcm_state (snd_pcm_t *pcm)
+ 	Return PCM state.
+int 	snd_pcm_status (snd_pcm_t *pcm, snd_pcm_status_t *status)
+ 	Obtain status (runtime) information for PCM handle.
+snd_pcm_stream_t 	snd_pcm_stream (snd_pcm_t *pcm)
+ 	get stream for a PCM handle
+int 	snd_pcm_sw_params (snd_pcm_t *pcm, snd_pcm_sw_params_t *params)
+ 	Install PCM software configuration defined by params.
+int 	snd_pcm_sw_params_current (snd_pcm_t *pcm, snd_pcm_sw_params_t *params)
+ 	Return current software configuration for a PCM.
+snd_pcm_type_t 	snd_pcm_type (snd_pcm_t *pcm)
+ 	get type of PCM handle
+int 	snd_pcm_unlink (snd_pcm_t *pcm)
+ 	Remove a PCM from a linked group.
+int 	snd_pcm_wait (snd_pcm_t *pcm, int timeout)
+ 	Wait for a PCM to become ready.
+snd_pcm_sframes_t 	snd_pcm_writei (snd_pcm_t *pcm, const void *buffer, snd_pcm_uframes_t size)
+ 	Write interleaved frames to a PCM.
+snd_pcm_sframes_t 	snd_pcm_writen (snd_pcm_t *pcm, void **bufs, snd_pcm_uframes_t size)
+ 	Write non interleaved frames to a PCM. 
+int 	snd_async_add_pcm_handler (snd_async_handler_t **handler, snd_pcm_t *pcm, snd_async_callback_t callback, void *private_data)
+ 	Add an async handler for a PCM.
+snd_pcm_t * 	snd_async_handler_get_pcm (snd_async_handler_t *handler)
+ 	Return PCM handle related to an async handler.
+snd_pcm_sframes_t 	snd_pcm_avail (snd_pcm_t *pcm)
+ 	Return number of frames ready to be read (capture) / written (playback)
+int 	snd_pcm_avail_delay (snd_pcm_t *pcm, snd_pcm_sframes_t *availp, snd_pcm_sframes_t *delayp)
+ 	Combine snd_pcm_avail and snd_pcm_delay functions.
+snd_pcm_sframes_t 	snd_pcm_avail_update (snd_pcm_t *pcm)
+ 	Return number of frames ready to be read (capture) / written (playback)
+int 	snd_pcm_close (snd_pcm_t *pcm)
+ 	close PCM handle
+int 	snd_pcm_delay (snd_pcm_t *pcm, snd_pcm_sframes_t *delayp)
+ 	Obtain delay for a running PCM handle.
+int 	snd_pcm_drain (snd_pcm_t *pcm)
+ 	Stop a PCM preserving pending frames.
+int 	snd_pcm_drop (snd_pcm_t *pcm)
+ 	Stop a PCM dropping pending frames.
+snd_pcm_sframes_t 	snd_pcm_forward (snd_pcm_t *pcm, snd_pcm_uframes_t frames)
+ 	Move application frame position forward.
+snd_pcm_sframes_t 	snd_pcm_forwardable (snd_pcm_t *pcm)
+ 	Get safe count of frames which can be forwarded.
+int 	snd_pcm_get_params (snd_pcm_t *pcm, snd_pcm_uframes_t *buffer_size, snd_pcm_uframes_t *period_size)
+ 	Get the transfer size parameters in a simple way.
+int 	snd_pcm_htimestamp (snd_pcm_t *pcm, snd_pcm_uframes_t *avail, snd_htimestamp_t *tstamp)
+ 	Obtain last position update hi-res timestamp.
+int 	snd_pcm_hw_free (snd_pcm_t *pcm)
+ 	Remove PCM hardware configuration and free associated resources.
+int 	snd_pcm_hw_params (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Install one PCM hardware configuration chosen from a configuration space and snd_pcm_prepare it.
+int 	snd_pcm_hw_params_current (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Retreive current PCM hardware configuration chosen with snd_pcm_hw_params.
+int 	snd_pcm_hwsync (snd_pcm_t *pcm)
+ 	(DEPRECATED) Synchronize stream position with hardware
+int 	snd_pcm_info (snd_pcm_t *pcm, snd_pcm_info_t *info)
+ 	Obtain general (static) information for PCM handle.
+int 	snd_pcm_link (snd_pcm_t *pcm1, snd_pcm_t *pcm2)
+ 	Link two PCMs.
+const char * 	snd_pcm_name (snd_pcm_t *pcm)
+ 	get identifier of PCM handle
+int 	snd_pcm_nonblock (snd_pcm_t *pcm, int nonblock)
+ 	set nonblock mode
+int 	snd_pcm_open (snd_pcm_t **pcm, const char *name, snd_pcm_stream_t stream, int mode)
+ 	Opens a PCM.
+int 	snd_pcm_open_lconf (snd_pcm_t **pcm, const char *name, snd_pcm_stream_t stream, int mode, snd_config_t *lconf)
+ 	Opens a PCM using local configuration.
+int 	snd_pcm_pause (snd_pcm_t *pcm, int enable)
+ 	Pause/resume PCM.
+int 	snd_pcm_poll_descriptors (snd_pcm_t *pcm, struct pollfd *pfds, unsigned int space)
+ 	get poll descriptors
+int 	snd_pcm_poll_descriptors_count (snd_pcm_t *pcm)
+ 	get count of poll descriptors for PCM handle
+int 	snd_pcm_poll_descriptors_revents (snd_pcm_t *pcm, struct pollfd *pfds, unsigned int nfds, unsigned short *revents)
+ 	get returned events from poll descriptors
+int 	snd_pcm_prepare (snd_pcm_t *pcm)
+ 	Prepare PCM for use.
+snd_pcm_sframes_t 	snd_pcm_readi (snd_pcm_t *pcm, void *buffer, snd_pcm_uframes_t size)
+ 	Read interleaved frames from a PCM.
+snd_pcm_sframes_t 	snd_pcm_readn (snd_pcm_t *pcm, void **bufs, snd_pcm_uframes_t size)
+ 	Read non interleaved frames to a PCM.
+int 	snd_pcm_recover (snd_pcm_t *pcm, int err, int silent)
+ 	Recover the stream state from an error or suspend.
+int 	snd_pcm_reset (snd_pcm_t *pcm)
+ 	Reset PCM position.
+int 	snd_pcm_resume (snd_pcm_t *pcm)
+ 	Resume from suspend, no samples are lost.
+snd_pcm_sframes_t 	snd_pcm_rewind (snd_pcm_t *pcm, snd_pcm_uframes_t frames)
+ 	Move application frame position backward.
+snd_pcm_sframes_t 	snd_pcm_rewindable (snd_pcm_t *pcm)
+ 	Get safe count of frames which can be rewinded.
+int 	snd_pcm_set_params (snd_pcm_t *pcm, snd_pcm_format_t format, snd_pcm_access_t access, unsigned int channels, unsigned int rate, int soft_resample, unsigned int latency)
+ 	Set the hardware and software parameters in a simple way.
+int 	snd_pcm_start (snd_pcm_t *pcm)
+ 	Start a PCM.
+snd_pcm_state_t 	snd_pcm_state (snd_pcm_t *pcm)
+ 	Return PCM state.
+int 	snd_pcm_status (snd_pcm_t *pcm, snd_pcm_status_t *status)
+ 	Obtain status (runtime) information for PCM handle.
+snd_pcm_stream_t 	snd_pcm_stream (snd_pcm_t *pcm)
+ 	get stream for a PCM handle
+int 	snd_pcm_sw_params (snd_pcm_t *pcm, snd_pcm_sw_params_t *params)
+ 	Install PCM software configuration defined by params.
+int 	snd_pcm_sw_params_current (snd_pcm_t *pcm, snd_pcm_sw_params_t *params)
+ 	Return current software configuration for a PCM.
+snd_pcm_type_t 	snd_pcm_type (snd_pcm_t *pcm)
+ 	get type of PCM handle
+int 	snd_pcm_unlink (snd_pcm_t *pcm)
+ 	Remove a PCM from a linked group.
+int 	snd_pcm_wait (snd_pcm_t *pcm, int timeout)
+ 	Wait for a PCM to become ready.
+snd_pcm_sframes_t 	snd_pcm_writei (snd_pcm_t *pcm, const void *buffer, snd_pcm_uframes_t size)
+ 	Write interleaved frames to a PCM.
+snd_pcm_sframes_t 	snd_pcm_writen (snd_pcm_t *pcm, void **bufs, snd_pcm_uframes_t size)
+ 	Write non interleaved frames to a PCM. 
+int 	snd_pcm_hw_params_any (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Fill params with a full configuration space for a PCM.
+int 	snd_pcm_hw_params_can_forward (const snd_pcm_hw_params_t *params)
+int 	snd_pcm_hw_params_can_mmap_sample_resolution (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware supports sample-resolution mmap for given configuration.
+int 	snd_pcm_hw_params_can_overrange (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware supports overrange detection.
+int 	snd_pcm_hw_params_can_pause (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware supports pause.
+int 	snd_pcm_hw_params_can_resume (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware supports resume.
+int 	snd_pcm_hw_params_can_rewind (const snd_pcm_hw_params_t *params)
+int 	snd_pcm_hw_params_can_sync_start (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware supports synchronized start with sample resolution.
+void 	snd_pcm_hw_params_copy (snd_pcm_hw_params_t *dst, const snd_pcm_hw_params_t *src)
+ 	copy one snd_pcm_hw_params_t to another
+void 	snd_pcm_hw_params_free (snd_pcm_hw_params_t *obj)
+ 	frees a previously allocated snd_pcm_hw_params_t
+int 	snd_pcm_hw_params_get_access (const snd_pcm_hw_params_t *params, snd_pcm_access_t *_access)
+ 	Extract access type from a configuration space.
+int 	snd_pcm_hw_params_get_access_mask (snd_pcm_hw_params_t *params, snd_pcm_access_mask_t *mask)
+ 	Get access mask from a configuration space.
+int 	snd_pcm_hw_params_get_buffer_size (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Extract buffer size from a configuration space.
+int 	snd_pcm_hw_params_get_buffer_size_max (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Extract maximum buffer size from a configuration space.
+int 	snd_pcm_hw_params_get_buffer_size_min (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Extract minimum buffer size from a configuration space.
+int 	snd_pcm_hw_params_get_buffer_time (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract buffer time from a configuration space.
+int 	snd_pcm_hw_params_get_buffer_time_max (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract maximum buffer time from a configuration space.
+int 	snd_pcm_hw_params_get_buffer_time_min (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract minimum buffer time from a configuration space.
+int 	snd_pcm_hw_params_get_channels (const snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Extract channels from a configuration space.
+int 	snd_pcm_hw_params_get_channels_max (const snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Extract maximum channels count from a configuration space.
+int 	snd_pcm_hw_params_get_channels_min (const snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Extract minimum channels count from a configuration space.
+int 	snd_pcm_hw_params_get_export_buffer (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Extract buffer accessibility from a configuration space.
+int 	snd_pcm_hw_params_get_fifo_size (const snd_pcm_hw_params_t *params)
+ 	Get hard are FIFO size info from a configuration space.
+int 	snd_pcm_hw_params_get_format (const snd_pcm_hw_params_t *params, snd_pcm_format_t *val)
+ 	Extract format from a configuration space.
+void 	snd_pcm_hw_params_get_format_mask (snd_pcm_hw_params_t *params, snd_pcm_format_mask_t *mask)
+ 	Get format mask from a configuration space.
+int 	snd_pcm_hw_params_get_min_align (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Get the minimum transfer align value in samples.
+int 	snd_pcm_hw_params_get_period_size (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *frames, int *dir)
+ 	Extract period size from a configuration space.
+int 	snd_pcm_hw_params_get_period_size_max (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *frames, int *dir)
+ 	Extract maximum period size from a configuration space.
+int 	snd_pcm_hw_params_get_period_size_min (const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *frames, int *dir)
+ 	Extract minimum period size from a configuration space.
+int 	snd_pcm_hw_params_get_period_time (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract period time from a configuration space.
+int 	snd_pcm_hw_params_get_period_time_max (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract maximum period time from a configuration space.
+int 	snd_pcm_hw_params_get_period_time_min (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract minimum period time from a configuration space.
+int 	snd_pcm_hw_params_get_periods (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract periods from a configuration space.
+int 	snd_pcm_hw_params_get_periods_max (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract maximum periods count from a configuration space.
+int 	snd_pcm_hw_params_get_periods_min (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract minimum periods count from a configuration space.
+int 	snd_pcm_hw_params_get_rate (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract rate from a configuration space.
+int 	snd_pcm_hw_params_get_rate_max (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract maximum rate from a configuration space.
+int 	snd_pcm_hw_params_get_rate_min (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Extract minimum rate from a configuration space.
+int 	snd_pcm_hw_params_get_rate_numden (const snd_pcm_hw_params_t *params, unsigned int *rate_num, unsigned int *rate_den)
+ 	Get rate exact info from a configuration space.
+int 	snd_pcm_hw_params_get_rate_resample (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Extract resample state from a configuration space.
+int 	snd_pcm_hw_params_get_sbits (const snd_pcm_hw_params_t *params)
+ 	Get sample resolution info from a configuration space.
+int 	snd_pcm_hw_params_get_subformat (const snd_pcm_hw_params_t *params, snd_pcm_subformat_t *subformat)
+ 	Extract subformat from a configuration space.
+void 	snd_pcm_hw_params_get_subformat_mask (snd_pcm_hw_params_t *params, snd_pcm_subformat_mask_t *mask)
+ 	Get subformat mask from a configuration space.
+int 	snd_pcm_hw_params_is_batch (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware does double buffering for data transfers for given configuration.
+int 	snd_pcm_hw_params_is_block_transfer (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware does block transfers for samples for given configuration.
+int 	snd_pcm_hw_params_is_double (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware does double buffering for start/stop for given configuration.
+int 	snd_pcm_hw_params_is_half_duplex (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware does half-duplex only.
+int 	snd_pcm_hw_params_is_joint_duplex (const snd_pcm_hw_params_t *params)
+ 	Check, if hardware does joint-duplex (playback and capture are somewhat correlated)
+int 	snd_pcm_hw_params_is_monotonic (const snd_pcm_hw_params_t *params)
+ 	Check, if timestamps are monotonic for given configuration.
+int 	snd_pcm_hw_params_malloc (snd_pcm_hw_params_t **ptr)
+ 	allocate an invalid snd_pcm_hw_params_t using standard malloc
+int 	snd_pcm_hw_params_set_access (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_t _access)
+ 	Restrict a configuration space to contain only one access type.
+int 	snd_pcm_hw_params_set_access_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_t *_access)
+ 	Restrict a configuration space to contain only its first access type.
+int 	snd_pcm_hw_params_set_access_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_t *_access)
+ 	Restrict a configuration space to contain only its last access type.
+int 	snd_pcm_hw_params_set_access_mask (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_mask_t *mask)
+ 	Restrict a configuration space to contain only a set of access types.
+int 	snd_pcm_hw_params_set_buffer_size (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t val)
+ 	Restrict a configuration space to contain only one buffer size.
+int 	snd_pcm_hw_params_set_buffer_size_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Restrict a configuration space to contain only its minimum buffer size.
+int 	snd_pcm_hw_params_set_buffer_size_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Restrict a configuration space to contain only its maximum buffer size.
+int 	snd_pcm_hw_params_set_buffer_size_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Restrict a configuration space with a maximum buffer size.
+int 	snd_pcm_hw_params_set_buffer_size_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Restrict a configuration space with a minimum buffer size.
+int 	snd_pcm_hw_params_set_buffer_size_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *min, snd_pcm_uframes_t *max)
+ 	Restrict a configuration space to have buffer sizes in a given range.
+int 	snd_pcm_hw_params_set_buffer_size_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val)
+ 	Restrict a configuration space to have buffer size nearest to a target.
+int 	snd_pcm_hw_params_set_buffer_time (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Restrict a configuration space to contain only one buffer time.
+int 	snd_pcm_hw_params_set_buffer_time_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its minimum buffer time.
+int 	snd_pcm_hw_params_set_buffer_time_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its maximum buffered time.
+int 	snd_pcm_hw_params_set_buffer_time_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a maximum buffer time.
+int 	snd_pcm_hw_params_set_buffer_time_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a minimum buffer time.
+int 	snd_pcm_hw_params_set_buffer_time_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *min, int *mindir, unsigned int *max, int *maxdir)
+ 	Restrict a configuration space to have buffer times in a given range.
+int 	snd_pcm_hw_params_set_buffer_time_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to have buffer time nearest to a target.
+int 	snd_pcm_hw_params_set_channels (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val)
+ 	Restrict a configuration space to contain only one channels count.
+int 	snd_pcm_hw_params_set_channels_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Restrict a configuration space to contain only its minimum channels count.
+int 	snd_pcm_hw_params_set_channels_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Restrict a configuration space to contain only its maximum channels count.
+int 	snd_pcm_hw_params_set_channels_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Restrict a configuration space with a maximum channels count.
+int 	snd_pcm_hw_params_set_channels_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Restrict a configuration space with a minimum channels count.
+int 	snd_pcm_hw_params_set_channels_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *min, unsigned int *max)
+ 	Restrict a configuration space to have channels counts in a given range.
+int 	snd_pcm_hw_params_set_channels_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val)
+ 	Restrict a configuration space to have channels count nearest to a target.
+int 	snd_pcm_hw_params_set_export_buffer (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val)
+ 	Restrict a configuration space to allow the buffer accessible from outside.
+int 	snd_pcm_hw_params_set_format (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t val)
+ 	Restrict a configuration space to contain only one format.
+int 	snd_pcm_hw_params_set_format_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t *format)
+ 	Restrict a configuration space to contain only its first format.
+int 	snd_pcm_hw_params_set_format_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t *format)
+ 	Restrict a configuration space to contain only its last format.
+int 	snd_pcm_hw_params_set_format_mask (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_mask_t *mask)
+ 	Restrict a configuration space to contain only a set of formats.
+int 	snd_pcm_hw_params_set_period_size (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t val, int dir)
+ 	Restrict a configuration space to contain only one period size.
+int 	snd_pcm_hw_params_set_period_size_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val, int *dir)
+ 	Restrict a configuration space to contain only its minimum period size.
+int 	snd_pcm_hw_params_set_period_size_integer (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Restrict a configuration space to contain only integer period sizes.
+int 	snd_pcm_hw_params_set_period_size_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val, int *dir)
+ 	Restrict a configuration space to contain only its maximum period size.
+int 	snd_pcm_hw_params_set_period_size_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val, int *dir)
+ 	Restrict a configuration space with a maximum period size.
+int 	snd_pcm_hw_params_set_period_size_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val, int *dir)
+ 	Restrict a configuration space with a minimum period size.
+int 	snd_pcm_hw_params_set_period_size_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *min, int *mindir, snd_pcm_uframes_t *max, int *maxdir)
+ 	Restrict a configuration space to have period sizes in a given range.
+int 	snd_pcm_hw_params_set_period_size_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val, int *dir)
+ 	Restrict a configuration space to have period size nearest to a target.
+int 	snd_pcm_hw_params_set_period_time (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Restrict a configuration space to contain only one period time.
+int 	snd_pcm_hw_params_set_period_time_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its minimum period time.
+int 	snd_pcm_hw_params_set_period_time_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its maximum period time.
+int 	snd_pcm_hw_params_set_period_time_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a maximum period time.
+int 	snd_pcm_hw_params_set_period_time_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a minimum period time.
+int 	snd_pcm_hw_params_set_period_time_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *min, int *mindir, unsigned int *max, int *maxdir)
+ 	Restrict a configuration space to have period times in a given range.
+int 	snd_pcm_hw_params_set_period_time_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to have period time nearest to a target.
+int 	snd_pcm_hw_params_set_periods (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Restrict a configuration space to contain only one periods count.
+int 	snd_pcm_hw_params_set_periods_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its minimum periods count.
+int 	snd_pcm_hw_params_set_periods_integer (snd_pcm_t *pcm, snd_pcm_hw_params_t *params)
+ 	Restrict a configuration space to contain only integer periods counts.
+int 	snd_pcm_hw_params_set_periods_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its maximum periods count.
+int 	snd_pcm_hw_params_set_periods_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a maximum periods count.
+int 	snd_pcm_hw_params_set_periods_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a minimum periods count.
+int 	snd_pcm_hw_params_set_periods_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *min, int *mindir, unsigned int *max, int *maxdir)
+ 	Restrict a configuration space to have periods counts in a given range.
+int 	snd_pcm_hw_params_set_periods_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to have periods count nearest to a target.
+int 	snd_pcm_hw_params_set_rate (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Restrict a configuration space to contain only one rate.
+int 	snd_pcm_hw_params_set_rate_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its minimum rate.
+int 	snd_pcm_hw_params_set_rate_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to contain only its maximum rate.
+int 	snd_pcm_hw_params_set_rate_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a maximum rate.
+int 	snd_pcm_hw_params_set_rate_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space with a minimum rate.
+int 	snd_pcm_hw_params_set_rate_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *min, int *mindir, unsigned int *max, int *maxdir)
+ 	Restrict a configuration space to have rates in a given range.
+int 	snd_pcm_hw_params_set_rate_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir)
+ 	Restrict a configuration space to have rate nearest to a target.
+int 	snd_pcm_hw_params_set_rate_resample (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val)
+ 	Restrict a configuration space to contain only real hardware rates.
+int 	snd_pcm_hw_params_set_subformat (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_subformat_t subformat)
+ 	Restrict a configuration space to contain only one subformat.
+int 	snd_pcm_hw_params_set_subformat_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_subformat_t *subformat)
+ 	Restrict a configuration space to contain only its first subformat.
+int 	snd_pcm_hw_params_set_subformat_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_subformat_t *subformat)
+ 	Restrict a configuration space to contain only its last subformat.
+int 	snd_pcm_hw_params_set_subformat_mask (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_subformat_mask_t *mask)
+ 	Restrict a configuration space to contain only a set of subformats.
+size_t 	snd_pcm_hw_params_sizeof (void)
+ 	get size of snd_pcm_hw_params_t
+int 	snd_pcm_hw_params_test_access (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_t _access)
+ 	Verify if an access type is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_buffer_size (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t val)
+ 	Verify if a buffer size is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_buffer_time (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Verify if a buffer time is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_channels (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val)
+ 	Verify if a channels count is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_format (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t val)
+ 	Verify if a format is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_period_size (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t val, int dir)
+ 	Verify if a period size is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_period_time (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Verify if a period time is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_periods (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Verify if a periods count is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_rate (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir)
+ 	Verify if a rate is available inside a configuration space for a PCM.
+int 	snd_pcm_hw_params_test_subformat (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_subformat_t subformat)
+ 	Verify if a subformat is available inside a configuration space for a PCM. 
+void 	snd_pcm_sw_params_copy (snd_pcm_sw_params_t *dst, const snd_pcm_sw_params_t *src)
+ 	copy one snd_pcm_sw_params_t to another
+void 	snd_pcm_sw_params_free (snd_pcm_sw_params_t *obj)
+ 	frees a previously allocated snd_pcm_sw_params_t
+int 	snd_pcm_sw_params_get_avail_min (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val)
+ 	Get avail min from a software configuration container.
+int 	snd_pcm_sw_params_get_boundary (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val)
+ 	Get boundary for ring pointers from a software configuration container.
+int 	snd_pcm_sw_params_get_period_event (const snd_pcm_sw_params_t *params, int *val)
+ 	Get period event from a software configuration container.
+int 	snd_pcm_sw_params_get_silence_size (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val)
+ 	Get silence size from a software configuration container.
+int 	snd_pcm_sw_params_get_silence_threshold (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val)
+ 	Get silence threshold from a software configuration container.
+int 	snd_pcm_sw_params_get_start_threshold (const snd_pcm_sw_params_t *paramsm, snd_pcm_uframes_t *val)
+ 	Get start threshold from a software configuration container.
+int 	snd_pcm_sw_params_get_stop_threshold (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val)
+ 	Get stop threshold from a software configuration container.
+int 	snd_pcm_sw_params_get_tstamp_mode (const snd_pcm_sw_params_t *params, snd_pcm_tstamp_t *val)
+ 	Get timestamp mode from a software configuration container.
+int 	snd_pcm_sw_params_malloc (snd_pcm_sw_params_t **ptr)
+ 	allocate an invalid snd_pcm_sw_params_t using standard malloc
+int 	snd_pcm_sw_params_set_avail_min (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val)
+int 	snd_pcm_sw_params_set_period_event (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, int val)
+ 	Set period event inside a software configuration container.
+int 	snd_pcm_sw_params_set_silence_size (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val)
+int 	snd_pcm_sw_params_set_silence_threshold (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val)
+int 	snd_pcm_sw_params_set_start_threshold (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val)
+int 	snd_pcm_sw_params_set_stop_threshold (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val)
+int 	snd_pcm_sw_params_set_tstamp_mode (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_tstamp_t val)
+size_t 	snd_pcm_sw_params_sizeof (void)
+ 	get size of snd_pcm_sw_params_t 
+void 	snd_pcm_access_mask_any (snd_pcm_access_mask_t *mask)
+ 	set all bits in a snd_pcm_access_mask_t
+void 	snd_pcm_access_mask_copy (snd_pcm_access_mask_t *dst, const snd_pcm_access_mask_t *src)
+ 	copy one snd_pcm_access_mask_t to another
+int 	snd_pcm_access_mask_empty (const snd_pcm_access_mask_t *mask)
+ 	test, if given a snd_pcm_access_mask_t is empty
+void 	snd_pcm_access_mask_free (snd_pcm_access_mask_t *obj)
+ 	frees a previously allocated snd_pcm_access_mask_t
+int 	snd_pcm_access_mask_malloc (snd_pcm_access_mask_t **ptr)
+ 	allocate an empty snd_pcm_access_mask_t using standard malloc
+void 	snd_pcm_access_mask_none (snd_pcm_access_mask_t *mask)
+ 	reset all bits in a snd_pcm_access_mask_t
+void 	snd_pcm_access_mask_reset (snd_pcm_access_mask_t *mask, snd_pcm_access_t val)
+ 	make an access type missing from a snd_pcm_access_mask_t
+void 	snd_pcm_access_mask_set (snd_pcm_access_mask_t *mask, snd_pcm_access_t val)
+ 	make an access type present in a snd_pcm_access_mask_t
+size_t 	snd_pcm_access_mask_sizeof (void)
+ 	get size of snd_pcm_access_mask_t
+int 	snd_pcm_access_mask_test (const snd_pcm_access_mask_t *mask, snd_pcm_access_t val)
+ 	test the presence of an access type in a snd_pcm_access_mask_t
+void 	snd_pcm_format_mask_any (snd_pcm_format_mask_t *mask)
+ 	set all bits in a snd_pcm_format_mask_t
+void 	snd_pcm_format_mask_copy (snd_pcm_format_mask_t *dst, const snd_pcm_format_mask_t *src)
+ 	copy one snd_pcm_format_mask_t to another
+int 	snd_pcm_format_mask_empty (const snd_pcm_format_mask_t *mask)
+ 	test, if given a snd_pcm_format_mask_t is empty
+void 	snd_pcm_format_mask_free (snd_pcm_format_mask_t *obj)
+ 	frees a previously allocated snd_pcm_format_mask_t
+int 	snd_pcm_format_mask_malloc (snd_pcm_format_mask_t **ptr)
+ 	allocate an empty snd_pcm_format_mask_t using standard malloc
+void 	snd_pcm_format_mask_none (snd_pcm_format_mask_t *mask)
+ 	reset all bits in a snd_pcm_format_mask_t
+void 	snd_pcm_format_mask_reset (snd_pcm_format_mask_t *mask, snd_pcm_format_t val)
+ 	make a format missing from a snd_pcm_format_mask_t
+void 	snd_pcm_format_mask_set (snd_pcm_format_mask_t *mask, snd_pcm_format_t val)
+ 	make a format present in a snd_pcm_format_mask_t
+size_t 	snd_pcm_format_mask_sizeof (void)
+ 	get size of snd_pcm_format_mask_t
+int 	snd_pcm_format_mask_test (const snd_pcm_format_mask_t *mask, snd_pcm_format_t val)
+ 	test the presence of a format in a snd_pcm_format_mask_t 
+void 	snd_pcm_subformat_mask_any (snd_pcm_subformat_mask_t *mask)
+ 	set all bits in a snd_pcm_subformat_mask_t
+void 	snd_pcm_subformat_mask_copy (snd_pcm_subformat_mask_t *dst, const snd_pcm_subformat_mask_t *src)
+ 	copy one snd_pcm_subformat_mask_t to another
+int 	snd_pcm_subformat_mask_empty (const snd_pcm_subformat_mask_t *mask)
+ 	test, if given a snd_pcm_subformat_mask_t is empty
+void 	snd_pcm_subformat_mask_free (snd_pcm_subformat_mask_t *obj)
+ 	frees a previously allocated snd_pcm_subformat_mask_t
+int 	snd_pcm_subformat_mask_malloc (snd_pcm_subformat_mask_t **ptr)
+ 	allocate an empty snd_pcm_subformat_mask_t using standard malloc
+void 	snd_pcm_subformat_mask_none (snd_pcm_subformat_mask_t *mask)
+ 	reset all bits in a snd_pcm_subformat_mask_t
+void 	snd_pcm_subformat_mask_reset (snd_pcm_subformat_mask_t *mask, snd_pcm_subformat_t val)
+ 	make a subformat missing from a snd_pcm_subformat_mask_t
+void 	snd_pcm_subformat_mask_set (snd_pcm_subformat_mask_t *mask, snd_pcm_subformat_t val)
+ 	make a subformat present in a snd_pcm_subformat_mask_t
+size_t 	snd_pcm_subformat_mask_sizeof (void)
+ 	get size of snd_pcm_subformat_mask_t
+int 	snd_pcm_subformat_mask_test (const snd_pcm_subformat_mask_t *mask, snd_pcm_subformat_t val)
+ 	test the presence of a subformat in a snd_pcm_subformat_mask_t 
+void 	snd_pcm_status_copy (snd_pcm_status_t *dst, const snd_pcm_status_t *src)
+ 	copy one snd_pcm_status_t to another
+void 	snd_pcm_status_free (snd_pcm_status_t *obj)
+ 	frees a previously allocated snd_pcm_status_t
+snd_pcm_uframes_t 	snd_pcm_status_get_avail (const snd_pcm_status_t *obj)
+ 	Get number of frames available from a PCM status container (see snd_pcm_avail_update)
+snd_pcm_uframes_t 	snd_pcm_status_get_avail_max (const snd_pcm_status_t *obj)
+ 	Get maximum number of frames available from a PCM status container after last snd_pcm_status call.
+snd_pcm_sframes_t 	snd_pcm_status_get_delay (const snd_pcm_status_t *obj)
+ 	Get delay from a PCM status container (see snd_pcm_delay)
+void 	snd_pcm_status_get_htstamp (const snd_pcm_status_t *obj, snd_htimestamp_t *ptr)
+ 	Get "now" hi-res timestamp from a PCM status container.
+snd_pcm_uframes_t 	snd_pcm_status_get_overrange (const snd_pcm_status_t *obj)
+ 	Get count of ADC overrange detections since last call.
+snd_pcm_state_t 	snd_pcm_status_get_state (const snd_pcm_status_t *obj)
+ 	Get state from a PCM status container (see snd_pcm_state)
+void 	snd_pcm_status_get_trigger_htstamp (const snd_pcm_status_t *obj, snd_htimestamp_t *ptr)
+ 	Get trigger hi-res timestamp from a PCM status container.
+void 	snd_pcm_status_get_trigger_tstamp (const snd_pcm_status_t *obj, snd_timestamp_t *ptr)
+ 	Get trigger timestamp from a PCM status container.
+void 	snd_pcm_status_get_tstamp (const snd_pcm_status_t *obj, snd_timestamp_t *ptr)
+ 	Get "now" timestamp from a PCM status container.
+int 	snd_pcm_status_malloc (snd_pcm_status_t **ptr)
+ 	allocate an invalid snd_pcm_status_t using standard malloc
+size_t 	snd_pcm_status_sizeof (void)
+ 	get size of snd_pcm_status_t 
+const char * 	snd_pcm_access_name (const snd_pcm_access_t _access)
+ 	get name of PCM access type
+const char * 	snd_pcm_format_description (const snd_pcm_format_t format)
+ 	get description of PCM sample format
+const char * 	snd_pcm_format_name (const snd_pcm_format_t format)
+ 	get name of PCM sample format
+snd_pcm_format_t 	snd_pcm_format_value (const char *name)
+ 	get PCM sample format from name
+const char * 	snd_pcm_state_name (const snd_pcm_state_t state)
+ 	get name of PCM state
+const char * 	snd_pcm_stream_name (const snd_pcm_stream_t stream)
+ 	get name of PCM stream type
+const char * 	snd_pcm_subformat_description (const snd_pcm_subformat_t subformat)
+ 	get description of PCM sample subformat
+const char * 	snd_pcm_subformat_name (const snd_pcm_subformat_t subformat)
+ 	get name of PCM sample subformat
+const char * 	snd_pcm_tstamp_mode_name (const snd_pcm_tstamp_t mode)
+ 	get name of PCM tstamp mode setting
+const char * 	snd_pcm_type_name (snd_pcm_type_t type)
+ 	get name of PCM type 
+int 	snd_pcm_dump (snd_pcm_t *pcm, snd_output_t *out)
+ 	Dump PCM info.
+int 	snd_pcm_dump_hw_setup (snd_pcm_t *pcm, snd_output_t *out)
+ 	Dump current hardware setup for PCM.
+int 	snd_pcm_dump_setup (snd_pcm_t *pcm, snd_output_t *out)
+ 	Dump current setup (hardware and software) for PCM.
+int 	snd_pcm_dump_sw_setup (snd_pcm_t *pcm, snd_output_t *out)
+ 	Dump current software setup for PCM.
+int 	snd_pcm_hw_params_dump (snd_pcm_hw_params_t *params, snd_output_t *out)
+ 	Dump a PCM hardware configuration space.
+int 	snd_pcm_status_dump (snd_pcm_status_t *status, snd_output_t *out)
+ 	Dump status.
+int 	snd_pcm_sw_params_dump (snd_pcm_sw_params_t *params, snd_output_t *out)
+ 	Dump a software configuration. 
+int 	snd_pcm_mmap_begin (snd_pcm_t *pcm, const snd_pcm_channel_area_t **areas, snd_pcm_uframes_t *offset, snd_pcm_uframes_t *frames)
+ 	Application request to access a portion of direct (mmap) area.
+snd_pcm_sframes_t 	snd_pcm_mmap_commit (snd_pcm_t *pcm, snd_pcm_uframes_t offset, snd_pcm_uframes_t frames)
+ 	Application has completed the access to area requested with snd_pcm_mmap_begin.
+snd_pcm_sframes_t 	snd_pcm_mmap_readi (snd_pcm_t *pcm, void *buffer, snd_pcm_uframes_t size)
+ 	Read interleaved frames from a PCM using direct buffer (mmap)
+snd_pcm_sframes_t 	snd_pcm_mmap_readn (snd_pcm_t *pcm, void **bufs, snd_pcm_uframes_t size)
+ 	Read non interleaved frames to a PCM using direct buffer (mmap)
+snd_pcm_sframes_t 	snd_pcm_mmap_writei (snd_pcm_t *pcm, const void *buffer, snd_pcm_uframes_t size)
+ 	Write interleaved frames to a PCM using direct buffer (mmap)
+snd_pcm_sframes_t 	snd_pcm_mmap_writen (snd_pcm_t *pcm, void **bufs, snd_pcm_uframes_t size)
+ 	Write non interleaved frames to a PCM using direct buffer (mmap) 
+int 	snd_pcm_area_copy (const snd_pcm_channel_area_t *dst_channel, snd_pcm_uframes_t dst_offset, const snd_pcm_channel_area_t *src_channel, snd_pcm_uframes_t src_offset, unsigned int samples, snd_pcm_format_t format)
+ 	Copy an area.
+int 	snd_pcm_area_silence (const snd_pcm_channel_area_t *dst_channel, snd_pcm_uframes_t dst_offset, unsigned int samples, snd_pcm_format_t format)
+ 	Silence an area.
+int 	snd_pcm_areas_copy (const snd_pcm_channel_area_t *dst_channels, snd_pcm_uframes_t dst_offset, const snd_pcm_channel_area_t *src_channels, snd_pcm_uframes_t src_offset, unsigned int channels, snd_pcm_uframes_t frames, snd_pcm_format_t format)
+ 	Copy one or more areas.
+int 	snd_pcm_areas_silence (const snd_pcm_channel_area_t *dst_channels, snd_pcm_uframes_t dst_offset, unsigned int channels, snd_pcm_uframes_t frames, snd_pcm_format_t format)
+ 	Silence one or more areas.
+snd_pcm_format_t 	snd_pcm_build_linear_format (int width, int pwidth, int unsignd, int big_endian)
+ 	Compose a PCM sample linear format.
+snd_pcm_sframes_t 	snd_pcm_bytes_to_frames (snd_pcm_t *pcm, ssize_t bytes)
+ 	Convert bytes in frames for a PCM.
+long 	snd_pcm_bytes_to_samples (snd_pcm_t *pcm, ssize_t bytes)
+ 	Convert bytes in samples for a PCM.
+int 	snd_pcm_format_big_endian (snd_pcm_format_t format)
+ 	Return endian info for a PCM sample format.
+int 	snd_pcm_format_cpu_endian (snd_pcm_format_t format)
+ 	Return endian info for a PCM sample format.
+int 	snd_pcm_format_float (snd_pcm_format_t format)
+ 	Return float info for a PCM sample format.
+int 	snd_pcm_format_linear (snd_pcm_format_t format)
+ 	Return linear info for a PCM sample format.
+int 	snd_pcm_format_little_endian (snd_pcm_format_t format)
+ 	Return endian info for a PCM sample format.
+int 	snd_pcm_format_physical_width (snd_pcm_format_t format)
+ 	Return bits needed to store a PCM sample.
+int 	snd_pcm_format_set_silence (snd_pcm_format_t format, void *buf, unsigned int samples)
+ 	Silence a PCM samples buffer.
+int 	snd_pcm_format_signed (snd_pcm_format_t format)
+ 	Return sign info for a PCM sample linear format.
+u_int8_t 	snd_pcm_format_silence (snd_pcm_format_t format)
+ 	Return 8 bit expressing silence for a PCM sample format.
+u_int16_t 	snd_pcm_format_silence_16 (snd_pcm_format_t format)
+ 	Return 16 bit expressing silence for a PCM sample format.
+u_int32_t 	snd_pcm_format_silence_32 (snd_pcm_format_t format)
+ 	Return 32 bit expressing silence for a PCM sample format.
+u_int64_t 	snd_pcm_format_silence_64 (snd_pcm_format_t format)
+ 	Return 64 bit expressing silence for a PCM sample format.
+ssize_t 	snd_pcm_format_size (snd_pcm_format_t format, size_t samples)
+ 	Return bytes needed to store a quantity of PCM sample.
+int 	snd_pcm_format_unsigned (snd_pcm_format_t format)
+ 	Return sign info for a PCM sample linear format.
+int 	snd_pcm_format_width (snd_pcm_format_t format)
+ 	Return nominal bits per a PCM sample.
+ssize_t 	snd_pcm_frames_to_bytes (snd_pcm_t *pcm, snd_pcm_sframes_t frames)
+ 	Convert frames in bytes for a PCM.
+ssize_t 	snd_pcm_samples_to_bytes (snd_pcm_t *pcm, long samples)
+ 	Convert samples in bytes for a PCM. 
+int 	snd_pcm_hook_add (snd_pcm_hook_t **hookp, snd_pcm_t *pcm, snd_pcm_hook_type_t type, snd_pcm_hook_func_t func, void *private_data)
+ 	Add a PCM hook at end of hooks chain.
+snd_pcm_t * 	snd_pcm_hook_get_pcm (snd_pcm_hook_t *hook)
+ 	Get PCM handle for a PCM hook.
+void * 	snd_pcm_hook_get_private (snd_pcm_hook_t *hook)
+ 	Get callback function private data for a PCM hook.
+int 	snd_pcm_hook_remove (snd_pcm_hook_t *hook)
+ 	Remove a PCM hook.
+void 	snd_pcm_hook_set_private (snd_pcm_hook_t *hook, void *private_data)
+ 	Set callback function private data for a PCM hook. 
+int 	snd_pcm_meter_add_scope (snd_pcm_t *pcm, snd_pcm_scope_t *scope)
+ 	Add a scope to a SND_PCM_TYPE_METER PCM.
+snd_pcm_uframes_t 	snd_pcm_meter_get_boundary (snd_pcm_t *pcm)
+ 	Get boundary for frame pointers from a SND_PCM_TYPE_METER PCM.
+snd_pcm_uframes_t 	snd_pcm_meter_get_bufsize (snd_pcm_t *pcm)
+ 	Get meter buffer size from a SND_PCM_TYPE_METER PCM.
+unsigned int 	snd_pcm_meter_get_channels (snd_pcm_t *pcm)
+ 	Get meter channels from a SND_PCM_TYPE_METER PCM.
+snd_pcm_uframes_t 	snd_pcm_meter_get_now (snd_pcm_t *pcm)
+ 	Get meter "now" frame pointer from a SND_PCM_TYPE_METER PCM.
+unsigned int 	snd_pcm_meter_get_rate (snd_pcm_t *pcm)
+ 	Get meter rate from a SND_PCM_TYPE_METER PCM.
+snd_pcm_scope_t * 	snd_pcm_meter_search_scope (snd_pcm_t *pcm, const char *name)
+ 	Search an installed scope inside a SND_PCM_TYPE_METER PCM.
+void * 	snd_pcm_scope_get_callback_private (snd_pcm_scope_t *scope)
+ 	Get callbacks private value for a SND_PCM_TYPE_METER PCM scope.
+const char * 	snd_pcm_scope_get_name (snd_pcm_scope_t *scope)
+ 	Get name of a SND_PCM_TYPE_METER PCM scope.
+int 	snd_pcm_scope_malloc (snd_pcm_scope_t **ptr)
+ 	allocate an invalid snd_pcm_scope_t using standard malloc
+int16_t * 	snd_pcm_scope_s16_get_channel_buffer (snd_pcm_scope_t *scope, unsigned int channel)
+ 	Get s16 pseudo scope frames buffer for a channel.
+int 	snd_pcm_scope_s16_open (snd_pcm_t *pcm, const char *name, snd_pcm_scope_t **scopep)
+ 	Add a s16 pseudo scope to a SND_PCM_TYPE_METER PCM.
+void 	snd_pcm_scope_set_callback_private (snd_pcm_scope_t *scope, void *val)
+ 	Get callbacks private value for a SND_PCM_TYPE_METER PCM scope.
+void 	snd_pcm_scope_set_name (snd_pcm_scope_t *scope, const char *val)
+ 	Set name of a SND_PCM_TYPE_METER PCM scope.
+void 	snd_pcm_scope_set_ops (snd_pcm_scope_t *scope, snd_pcm_scope_ops_t *val)
+ 	Set callbacks for a SND_PCM_TYPE_METER PCM scope. 
+int 	snd_spcm_init (snd_pcm_t *pcm, unsigned int rate, unsigned int channels, snd_pcm_format_t format, snd_pcm_subformat_t subformat, snd_spcm_latency_t latency, snd_pcm_access_t _access, snd_spcm_xrun_type_t xrun_type)
+ 	Set up a simple PCM.
+int 	snd_spcm_init_duplex (snd_pcm_t *playback_pcm, snd_pcm_t *capture_pcm, unsigned int rate, unsigned int channels, snd_pcm_format_t format, snd_pcm_subformat_t subformat, snd_spcm_latency_t latency, snd_pcm_access_t _access, snd_spcm_xrun_type_t xrun_type, snd_spcm_duplex_type_t duplex_type)
+ 	Initialize simple PCMs in the duplex mode.
+int 	snd_spcm_init_get_params (snd_pcm_t *pcm, unsigned int *rate, snd_pcm_uframes_t *buffer_size, snd_pcm_uframes_t *period_size)
+ 	Get the set up of simple PCM. 
+int 	snd_pcm_hw_params_get_tick_time (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_get_tick_time_max (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_get_tick_time_min (const snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time_first (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time_last (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time_max (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time_min (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time_minmax (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *min, int *mindir, unsigned int *max, int *maxdir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_set_tick_time_near (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) __attribute__((deprecated))
+int 	snd_pcm_hw_params_test_tick_time (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val, int dir) __attribute__((deprecated))
+const char * 	snd_pcm_start_mode_name (snd_pcm_start_t mode) __attribute__((deprecated))
+ 	(DEPRECATED) get name of PCM start mode setting
+int 	snd_pcm_sw_params_get_sleep_min (const snd_pcm_sw_params_t *params, unsigned int *val) __attribute__((deprecated))
+snd_pcm_start_t 	snd_pcm_sw_params_get_start_mode (const snd_pcm_sw_params_t *params) __attribute__((deprecated))
+ 	(DEPRECATED) Get start mode from a software configuration container
+int 	snd_pcm_sw_params_get_xfer_align (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val) __attribute__((deprecated))
+snd_pcm_xrun_t 	snd_pcm_sw_params_get_xrun_mode (const snd_pcm_sw_params_t *params) __attribute__((deprecated))
+ 	(DEPRECATED) Get xrun mode from a software configuration container
+int 	snd_pcm_sw_params_set_sleep_min (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, unsigned int val) __attribute__((deprecated))
+int 	snd_pcm_sw_params_set_start_mode (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_start_t val) __attribute__((deprecated))
+ 	(DEPRECATED) Set start mode inside a software configuration container
+int 	snd_pcm_sw_params_set_xfer_align (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val) __attribute__((deprecated))
+int 	snd_pcm_sw_params_set_xrun_mode (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_xrun_t val) __attribute__((deprecated))
+const char * 	snd_pcm_xrun_mode_name (snd_pcm_xrun_t mode) __attribute__((deprecated))
+ 	(DEPRECATED) get name of PCM xrun mode setting 
+int 	_snd_pcm_adpcm_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new Ima-ADPCM conversion PCM.
+int 	_snd_pcm_alaw_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new A-Law conversion PCM.
+int 	_snd_pcm_copy_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new copy PCM.
+int 	_snd_pcm_hooks_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new hooks PCM.
+int 	_snd_pcm_hw_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root ATTRIBUTE_UNUSED, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new hw PCM.
+int 	_snd_pcm_jack_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+int 	_snd_pcm_ladspa_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new LADSPA<->ALSA PCM.
+int 	_snd_pcm_lfloat_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+int 	_snd_pcm_linear_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new linear conversion PCM.
+int 	_snd_pcm_mulaw_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new Mu-Law conversion PCM.
+int 	_snd_pcm_rate_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new rate PCM.
+int 	_snd_pcm_route_open (snd_pcm_t **pcmp, const char *name, snd_config_t *root, snd_config_t *conf, snd_pcm_stream_t stream, int mode)
+ 	Creates a new Route & Volume PCM.
+int 	snd_pcm_adpcm_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, snd_pcm_t *slave, int close_slave)
+ 	Creates a new Ima-ADPCM conversion PCM.
+int 	snd_pcm_alaw_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, snd_pcm_t *slave, int close_slave)
+ 	Creates a new A-Law conversion PCM.
+int 	snd_pcm_copy_open (snd_pcm_t **pcmp, const char *name, snd_pcm_t *slave, int close_slave)
+ 	Creates a new copy PCM.
+int 	snd_pcm_hooks_open (snd_pcm_t **pcmp, const char *name, snd_pcm_t *slave, int close_slave)
+ 	Creates a new hooks PCM.
+int 	snd_pcm_hw_open (snd_pcm_t **pcmp, const char *name, int card, int device, int subdevice, snd_pcm_stream_t stream, int mode, int mmap_emulation, int sync_ptr_ioctl)
+ 	Creates a new hw PCM.
+int 	snd_pcm_jack_open (snd_pcm_t **pcmp, const char *name, snd_config_t *playback_conf, snd_config_t *capture_conf, snd_pcm_stream_t stream, int mode)
+int 	snd_pcm_ladspa_open (snd_pcm_t **pcmp, const char *name, const char *ladspa_path, unsigned int channels, snd_config_t *ladspa_pplugins, snd_config_t *ladspa_cplugins, snd_pcm_t *slave, int close_slave)
+ 	Creates a new LADSPA<->ALSA Plugin.
+int 	snd_pcm_lfloat_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, snd_pcm_t *slave, int close_slave)
+int 	snd_pcm_linear_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, snd_pcm_t *slave, int close_slave)
+ 	Creates a new linear conversion PCM.
+int 	snd_pcm_mulaw_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, snd_pcm_t *slave, int close_slave)
+ 	Creates a new Mu-Law conversion PCM.
+int 	snd_pcm_rate_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, unsigned int srate, const snd_config_t *converter, snd_pcm_t *slave, int close_slave)
+ 	Creates a new rate PCM.
+int 	snd_pcm_route_determine_ttable (snd_config_t *tt, unsigned int *tt_csize, unsigned int *tt_ssize)
+ 	Determine route matrix sizes.
+int 	snd_pcm_route_load_ttable (snd_config_t *tt, snd_pcm_route_ttable_entry_t *ttable, unsigned int tt_csize, unsigned int tt_ssize, unsigned int *tt_cused, unsigned int *tt_sused, int schannels)
+ 	Load route matrix.
+int 	snd_pcm_route_open (snd_pcm_t **pcmp, const char *name, snd_pcm_format_t sformat, int schannels, snd_pcm_route_ttable_entry_t *ttable, unsigned int tt_ssize, unsigned int tt_cused, unsigned int tt_sused, snd_pcm_t *slave, int close_slave)
+ 	Creates a new Route & Volume PCM. 

@@ -1,3 +1,4 @@
+#gem 'ffi', '=1.3.1'
 require 'ffi'
 require 'sound/device_interface/base'
 
@@ -8,13 +9,13 @@ module Sound
       
       class Base::Handle
         def initialize
-          @handle = HWAVEOUT.new
+          @handle = FFI::MemoryPointer.new(:pointer)
         end
         def pointer
-          @handle.pointer
+          @handle
         end
         def id
-          @handle[:i]
+          @handle.read_int
         end
       end
 
@@ -25,13 +26,14 @@ module Sound
       typedef :uint, :mmresult
       
       ffi_lib :winmm
+      ffi_convention :stdcall
     
+      callback :waveOutProc, [:hwaveout, :uint, :pointer, :ulong, :ulong], :void
       attach_function :waveOutOpen, [:pointer, :uint, :pointer, :dword, :dword, :dword], :mmresult
       attach_function :waveOutPrepareHeader, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutWrite, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutUnprepareHeader, [:hwaveout, :pointer, :uint], :mmresult
       attach_function :waveOutClose, [:hwaveout], :mmresult
-      callback :waveOutProc, [:hwaveout, :uint, :pointer, :ulong, :ulong], :void
       attach_function :midiOutOpen, [:pointer, :uint, :dword, :dword, :dword], :mmresult
       attach_function :midiOutClose, [:uintptr_t], :mmresult
       attach_function :midiOutShortMsg, [:uintptr_t, :ulong], :mmresult
@@ -40,6 +42,8 @@ module Sound
         # explicit returns in this callback will result in an error
         case uMsg
         when WOM_OPEN
+          puts "haha"
+          sleep 3
         when WOM_DONE
           block_mutex.lock
           dwInstance.write_int(dwInstance.read_int + 1)
@@ -51,12 +55,14 @@ module Sound
       WAVE_MAPPER = -1
       DEFAULT_DEVICE_ID = WAVE_MAPPER
       
+      WOM_OPEN = 0x3BB
+      WOM_CLOSE = 0x3BC
+      WOM_DONE = 0x3BD
       CALLBACK_FUNCTION = 0x30000
       
       def play_midi_notes
         handle = FFI::MemoryPointer.new(:pointer)
         midiOutOpen(handle, -1, 0, 0, 0)
-        sleep 1
         midiOutShortMsg(handle.read_int, 0x007F3C90)
         sleep 0.3
         midiOutShortMsg(handle.read_int, 0x007F4090)
@@ -71,10 +77,11 @@ module Sound
       
       def play_with_multiple_buffers(buffer_count = 2)
       
+        data = Data.new.sine_wave(440, 200, 1)
         free_blocks.write_int buffer_count
-        waveOutOpen(handle.pointer, id, data.format.pointer, WaveOutProc, free_blocks.address, CALLBACK_FUNCTION)
+        waveOutOpen(handle, id, data.format.pointer, WaveOutProc, free_blocks.address, CALLBACK_FUNCTION)
       
-        data = generate_pcm_integer_array_for_freq(440, 200, 1)
+        data = data.data
       
         data1 = data[0...(data.length/2)]
         data_buffer = FFI::MemoryPointer.new(:int, data1.size)
@@ -104,8 +111,8 @@ module Sound
           sleep 0.01
         end
 
-        waveOutUnprepareHeader(hWaveOut.id, header.pointer, header.size)
-        waveOutUnprepareHeader(hWaveOut.id, header2.pointer, header2.size)
+        waveOutUnprepareHeader(handle.id, header.pointer, header.size)
+        waveOutUnprepareHeader(handle.id, header2.pointer, header2.size)
         
         waveOutClose(handle.id)
         
@@ -147,16 +154,6 @@ module Sound
       
       def block_mutex
         Thread.current[:block_mutex] ||= Mutex.new
-      end
-      
-      # Define an HWAVEOUT struct for use by all the waveOut functions.
-      # It is a handle to a waveOut stream, so starting up multiple
-      # streams using different handles allows for simultaneous playback.
-      # You never need to actually look at the struct, C takes care of
-      # its value.
-      #
-      class HWAVEOUT < FFI::Struct
-        layout :i, :int
       end
 
       #define WAVEHDR which is a header to a block of audio

@@ -87,7 +87,7 @@ module Sound
     #
     def write(data = Sound::Data.new)
       if closed?
-        puts "cannot write to a closed device"
+        warn("warning: cannot write to a closed device")
       else
         @mutex.lock
         @queue << Thread.new do
@@ -134,7 +134,7 @@ module Sound
     #
     def close
       if closed?
-        puts "cannot close a closed device"
+        warn("warning: device is already closed")
       else
         flush
         puts "device '#{id}' is closing now" if Sound.verbose

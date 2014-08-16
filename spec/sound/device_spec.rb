@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'stringio'
 #Device
 #  Abstracts physical devices
 #  it can be opened
@@ -73,7 +74,15 @@ describe Sound::Device do
       expect(device.queue[0]).to be_alive
     end
     context "when device is closed" do
-      it "informs the user that they cannot write to a closed device"
+      it "informs the user that they cannot write to a closed device" do
+        @orig_stderr = $stderr
+        $stderr = StringIO.new
+        default_device.close
+        default_device.write(Sound::Data.new.sine_wave(440, 10, 0))
+        $stderr.rewind
+        expect($stderr.string.chomp).to eq "warning: cannot write to a closed device"
+        $stderr = @orig_stderr
+      end
     end
   end
   describe "#flush" do
@@ -88,6 +97,19 @@ describe Sound::Device do
         device.flush
         expect(device.queue).to be_empty
       end
+      context "when the platform is not supported" do
+        it "informs the user that playback is not supported on their platform" do
+          orig_support = Sound.platform_supported
+          Sound.platform_supported = false
+          @orig_stderr = $stderr
+          $stderr = StringIO.new
+          device.flush
+          $stderr.rewind
+          expect($stderr.string.chomp).to eq "warning: playback is not yet supported on this platform"
+          $stderr = @orig_stderr
+          Sound.platform_supported = orig_support
+        end
+      end
     end
     context "buffer has many things in it" do
       let(:data) {Sound::Data.new.sine_wave(440, 10, 0)}
@@ -95,6 +117,30 @@ describe Sound::Device do
       it "has an empty buffer" do
         device.flush
         expect(device.queue).to be_empty
+      end
+    end
+  end
+  describe "#play" do
+    it "writes the data to the queue and immediately flushes it" do
+      default_device.play Sound::Data.new.sine_wave(440, 10, 0)
+      expect(default_device.queue).to be_empty
+    end
+  end
+  describe "#close" do
+    context "when a device is open" do
+      it "returns the device closed" do
+        expect(default_device.close).to be_closed
+      end
+    end
+    context "when a device is closed" do
+      it "informs the user that the device is already closed" do
+        @orig_stderr = $stderr
+        $stderr = StringIO.new
+        default_device.close
+        default_device.close
+        $stderr.rewind
+        expect($stderr.string.chomp).to eq "warning: device is already closed"
+        $stderr = @orig_stderr
       end
     end
   end
