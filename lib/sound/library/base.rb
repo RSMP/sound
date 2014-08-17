@@ -1,17 +1,17 @@
 require 'sound/device_interface'
 
 module Sound
-  module DeviceInterface
+  module Library
     module Base
       def Base.please_implement
-        raise NoMethodError, "Please implement ##{method} for your DeviceInterface."
+        raise NoMethodError, "Please implement ##{method} for your Library."
       end
       class Handle
         def pointer
-          raise NoMethodError, "Please implement #{self.class}##{__method__} for your DeviceInterface"
+          raise NoMethodError, "Please implement #{self.class}##{__method__} for your Library"
         end
         def id
-          raise NoMethodError, "Please implement #{self.class}##{__method__} for your DeviceInterface"
+          raise NoMethodError, "Please implement #{self.class}##{__method__} for your Library"
         end
       end
       private
