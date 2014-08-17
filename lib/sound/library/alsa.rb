@@ -1,10 +1,10 @@
 require 'ffi'
-require 'sound/device_interface/base'
+require 'sound/library/base'
 
 module Sound
-  module DeviceInterface
+  module Library
     module ALSA
-      include DeviceInterface::Base
+      include Library::Base
       
       class Base::Handle
         def initialize

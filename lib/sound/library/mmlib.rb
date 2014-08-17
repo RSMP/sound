@@ -1,11 +1,11 @@
 #gem 'ffi', '=1.3.1'
 require 'ffi'
-require 'sound/device_interface/base'
+require 'sound/library/base'
 
 module Sound
-  module DeviceInterface
-    module Win32
-      include DeviceInterface::Base
+  module Library
+    module MMLib
+      include Library::Base
       
       class Base::Handle
         def initialize
@@ -77,7 +77,7 @@ module Sound
       
       def play_with_multiple_buffers(buffer_count = 2)
       
-        data = Data.new.sine_wave(440, 200, 1)
+        data = Sound::Data.new.sine_wave(440, 200, 1)
         free_blocks.write_int buffer_count
         waveOutOpen(handle, id, data.format.pointer, WaveOutProc, free_blocks.address, CALLBACK_FUNCTION)
       
