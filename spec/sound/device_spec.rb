@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'stringio'
 #Device
 #  Abstracts physical devices
 #  it can be opened
@@ -13,6 +12,7 @@ require 'stringio'
 #  you can write any Data to it
 #  it has a identification
 describe Sound::Device do
+  let(:data) {Sound::Data.new.sine_wave(440, 10, 0)}
   let(:default_device) {Sound::Device.new}
   it "has an id" do
     expect(default_device.id)
@@ -66,7 +66,7 @@ describe Sound::Device do
     end
   end
   describe "#write" do
-    let(:device) {Sound::Device.new.write(Sound::Data.new.sine_wave(440, 10, 0))}
+    let(:device) {Sound::Device.new.write(data)}
     it "adds adds the data to the queue in its own thread" do
       expect(device.queue[0]).to be_kind_of Thread
     end
@@ -75,13 +75,9 @@ describe Sound::Device do
     end
     context "when device is closed" do
       it "informs the user that they cannot write to a closed device" do
-        @orig_stderr = $stderr
-        $stderr = StringIO.new
         default_device.close
-        default_device.write(Sound::Data.new.sine_wave(440, 10, 0))
-        $stderr.rewind
-        expect($stderr.string.chomp).to eq "warning: cannot write to a closed device"
-        $stderr = @orig_stderr
+        warning = "warning: cannot write to a closed device\n"
+        expect{default_device.write(data)}.to output(warning).to_stderr
       end
     end
   end
@@ -92,7 +88,7 @@ describe Sound::Device do
       end
     end
     context "buffer has one thing in it" do
-      let(:device) {Sound::Device.new.write(Sound::Data.new.sine_wave(440, 10, 0))}
+      let(:device) {Sound::Device.new.write(data)}
       it "has an empty buffer" do
         device.flush
         expect(device.queue).to be_empty
@@ -101,18 +97,13 @@ describe Sound::Device do
         it "informs the user that playback is not supported on their platform" do
           orig_support = Sound.platform_supported
           Sound.platform_supported = false
-          @orig_stderr = $stderr
-          $stderr = StringIO.new
-          device.flush
-          $stderr.rewind
-          expect($stderr.string.chomp).to eq "warning: playback is not yet supported on this platform"
-          $stderr = @orig_stderr
+          warning = "warning: playback is not yet supported on this platform\n"
+          expect{device.flush}.to output(warning).to_stderr
           Sound.platform_supported = orig_support
         end
       end
     end
     context "buffer has many things in it" do
-      let(:data) {Sound::Data.new.sine_wave(440, 10, 0)}
       let(:device) {Sound::Device.new.write(data).write(data).write(data)}
       it "has an empty buffer" do
         device.flush
@@ -122,7 +113,7 @@ describe Sound::Device do
   end
   describe "#play" do
     it "writes the data to the queue and immediately flushes it" do
-      default_device.play Sound::Data.new.sine_wave(440, 10, 0)
+      default_device.play data
       expect(default_device.queue).to be_empty
     end
   end
@@ -134,28 +125,24 @@ describe Sound::Device do
     end
     context "when a device is closed" do
       it "informs the user that the device is already closed" do
-        @orig_stderr = $stderr
-        $stderr = StringIO.new
         default_device.close
-        default_device.close
-        $stderr.rewind
-        expect($stderr.string.chomp).to eq "warning: device is already closed"
-        $stderr = @orig_stderr
+        warning = "warning: device is already closed"
+        expect{default_device.close}.to output.to_stderr
       end
     end
   end
   describe "#write_async" do
     context "when queue is empty" do
       it "adds a new array of threads to the queue" do
-        default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+        default_device.write_async data
         expect(default_device.queue.count).to eq 1
         expect(default_device.queue[0].class).to eq Array
       end
     end
     context "when queue contains a non-async member" do
       it "adds a new array of threads to the queue" do
-        default_device.write Sound::Data.new.sine_wave(440, 10, 0)
-        default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+        default_device.write data
+        default_device.write_async data
         expect(default_device.queue.count).to eq 2
         expect(default_device.queue[0].class).to eq Thread
         expect(default_device.queue[1].class).to eq Array
@@ -164,8 +151,8 @@ describe Sound::Device do
     context "when last member of queue is async" do
       context "when current call is forced to be new" do
         it "adds a new array of threads to the queue" do
-          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
-          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0), true
+          default_device.write_async data
+          default_device.write_async data, true
           expect(default_device.queue.count).to eq 2
           expect(default_device.queue[0].class).to eq Array
           expect(default_device.queue[1].class).to eq Array
@@ -173,8 +160,8 @@ describe Sound::Device do
       end
       context "when current call is not new" do
         it "adds to the last member of a queue which should be an array" do
-          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
-          default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
+          default_device.write_async data
+          default_device.write_async data
           expect(default_device.queue.count).to eq 1
           expect(default_device.queue[0].class).to eq Array
           expect(default_device.queue[0].count).to eq 2
@@ -183,13 +170,9 @@ describe Sound::Device do
     end
     context "when the device is closed" do
       it "informs the user that the device is closed" do
-        @orig_stderr = $stderr
-        $stderr = StringIO.new
         default_device.close
-        default_device.write_async Sound::Data.new.sine_wave(440, 10, 0)
-        $stderr.rewind
-        expect($stderr.string.chomp).to eq "warning: cannot write to a closed device"
-        $stderr = @orig_stderr
+        output = "warning: cannot write to a closed device\n"
+        expect {default_device.write_async data}.to output(output).to_stderr
       end
     end
   end

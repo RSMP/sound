@@ -125,8 +125,8 @@ module Sound
       end
     end
     
-    # should make a close! method that ignores any pending queue data blocks,
-    # but still safely closes the device as quickly as possible.
+    # flushes any pending queue data blocks, waits for them to finish playing,
+    # and then closes the device.
     #
     def close
       if closed?
@@ -134,6 +134,20 @@ module Sound
       else
         flush
         puts "device '#{id}' is closing now" if Sound.verbose
+        @status = :closed
+      end
+      self
+    end
+    
+    # closes the device as quickly as possible without flushing the
+    # data buffer.
+    #
+    def close!
+      if closed?
+        warn("warning: device is already closed")
+      else
+        flush!
+        puts "device '#{id}' is closing immediately now" if Sound.verbose
         @status = :closed
       end
       self
@@ -154,6 +168,13 @@ module Sound
           output.last.join if output.last.alive?
         end
       end
+    end
+    
+    # works like #flush, but empties the buffer without playing any sounds and
+    # closes the physical device as quickly as possible for its platform.
+    #
+    def flush!
+      @queue = Device::Buffer.new
     end
     
     private
