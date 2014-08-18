@@ -1,5 +1,7 @@
 require 'spec_helper'
 
-describe Sound::Library::ALSA do
-  
+if OS.linux?
+  describe Sound::Library::ALSA do
+    
+  end
 end

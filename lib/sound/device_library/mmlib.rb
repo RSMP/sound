@@ -1,13 +1,12 @@
 #gem 'ffi', '=1.3.1'
 require 'ffi'
-require 'sound/library/base'
 
 module Sound
-  module Library
+  module DeviceLibrary
     module MMLib
-      include Library::Base
+      extend self
       
-      class Base::Handle
+      class Handle
         def initialize
           @handle = FFI::MemoryPointer.new(:pointer)
         end
@@ -118,7 +117,7 @@ module Sound
         
       end
       
-      def open_device
+      def open_device(id)
         waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
       end
       
@@ -140,6 +139,18 @@ module Sound
         waveOutClose(handle.id)
       end
       
+      def handle
+        Thread.current[:handle] ||= Handle.new
+      end
+      
+      def data
+        Thread.current[:data] ||= Sound::Data.new
+      end
+      
+      def data_buffer
+        Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
+      end
+      
       def header
         Thread.current[:header] ||= WAVEHDR.new(data_buffer, buffer_length)
       end
@@ -154,6 +165,10 @@ module Sound
       
       def block_mutex
         Thread.current[:block_mutex] ||= Mutex.new
+      end
+      
+      def pointer
+        self.wfx.pointer
       end
 
       #define WAVEHDR which is a header to a block of audio
@@ -183,6 +198,37 @@ module Sound
           :dwLoops,         :ulong,
           :lpNext,          :pointer,
           :reserved,        :ulong
+        )
+      end
+
+      # Define WAVEFORMATEX which defines the format (PCM in this case)
+      # and various properties like sampling rate, number of channels, etc.
+      #
+      class WAVEFORMATEX < FFI::Struct
+    
+        # Initializes struct with sensible defaults for most commonly used
+        # values.  While setting these manually is possible, please be
+        # sure you know what changes will result in, as an incorrectly
+        # set struct will result in unpredictable behavior.
+        #
+        def initialize(nSamplesPerSec = 44100, wBitsPerSample = 16, nChannels = 1, cbSize = 0)
+          self[:wFormatTag] = WAVE_FORMAT_PCM
+          self[:nChannels] = nChannels
+          self[:nSamplesPerSec] = nSamplesPerSec
+          self[:wBitsPerSample] = wBitsPerSample
+          self[:cbSize] = cbSize
+          self[:nBlockAlign] = (self[:wBitsPerSample] >> 3) * self[:nChannels]
+          self[:nAvgBytesPerSec] = self[:nBlockAlign] * self[:nSamplesPerSec]
+        end
+      
+        layout(
+          :wFormatTag,      :ushort,
+          :nChannels,       :ushort,
+          :nSamplesPerSec,  :ulong,
+          :nAvgBytesPerSec, :ulong,
+          :nBlockAlign,     :ushort,
+          :wBitsPerSample,  :ushort,
+          :cbSize,          :ushort
         )
       end
       

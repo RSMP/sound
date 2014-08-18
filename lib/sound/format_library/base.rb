@@ -1,7 +1,6 @@
-require 'sound/format_interface'
 
 module Sound
-  module FormatInterface
+  module FormatLibrary
     module Base
       def new_format
       

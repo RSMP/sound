@@ -1,9 +1,9 @@
-require 'sound/format_interface/base'
+require 'sound/format_library/base'
 
 module Sound
-  module FormatInterface
-    module Win32
-      include FormatInterface::Base
+  module FormatLibrary
+    module MMLib
+      include FormatLibrary::Base
     
       WAVE_FORMAT_PCM = 1
       DEFAULT_FORMAT = WAVE_FORMAT_PCM

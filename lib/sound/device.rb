@@ -2,6 +2,7 @@
 module Sound
   
   class Device
+    include DeviceLibrary
     
     class Buffer < Array
       attr_accessor :force
@@ -17,7 +18,7 @@ module Sound
     # if a block is passed, it executes the code in the block, passing
     # the newly created device, and then closes the device.
     #
-    def initialize(direction = "w", id = DEFAULT_DEVICE_ID, &block)
+    def initialize(direction = "w", id = DeviceLibrary::DEFAULT_DEVICE_ID, &block)
       
       @id = id
       @status = :open
@@ -123,6 +124,7 @@ module Sound
         @mutex.unlock
         puts "writing async to queue of device '#{id}': #{data}" if Sound.verbose
       end
+      self
     end
     
     # flushes any pending queue data blocks, waits for them to finish playing,
@@ -163,7 +165,7 @@ module Sound
           finish_up(output).join
         else
           output.each do |thread|
-            finish_up(output)
+            finish_up(thread)
           end
           output.last.join if output.last.alive?
         end
@@ -191,7 +193,7 @@ module Sound
     end
     
     def set_up
-      open_device
+      open_device(id)
       prepare_buffer
       Thread.stop if Thread.current[:stop]
       Thread.pass if Thread.current[:async]

@@ -109,6 +109,13 @@ describe Sound::Device do
         device.flush
         expect(device.queue).to be_empty
       end
+      context "and some of those things are async" do
+        let(:device) {Sound::Device.new.write(data).write_async(data).write_async(data)}
+        it "has an empty buffer" do
+          device.flush
+          expect(device.queue).to be_empty
+        end
+      end
     end
   end
   describe "#play" do

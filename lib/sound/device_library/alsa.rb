@@ -1,12 +1,11 @@
 require 'ffi'
-require 'sound/library/base'
 
 module Sound
-  module Library
+  module DeviceLibrary
     module ALSA
-      include Library::Base
+      extend self
       
-      class Base::Handle
+      class Handle
         def initialize
           @handle = FFI::MemoryPointer.new(:pointer)
         end

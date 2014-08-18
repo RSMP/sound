@@ -1,4 +1,4 @@
 require 'spec_helper'
 
-describe Sound::Library::MMLib do
+describe Sound::DeviceLibrary::MMLib do
 end

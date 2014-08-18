@@ -1,4 +1,3 @@
-
 require 'pry'
 require 'os/os'
 
@@ -6,10 +5,10 @@ module Sound
 
   @verbose = false
   @no_device = false
-  @platform_supported = false
+  @platform_supported = true
   
   class << self
-    attr_accessor :verbose, :no_device, :platform_supported
+    attr_accessor :verbose, :no_device, :platform_supported, :device_library, :format_library
   end
   
   class NoDeviceError < RuntimeError; end
@@ -18,37 +17,29 @@ module Sound
 end
 
 if OS.windows?
-  require 'sound/device_interface/win32'
-  require 'sound/format_interface/win32'
-  module Sound
-    class Device
-      include DeviceInterface::Win32
-    end
-    class Format
-      include FormatInterface::Win32
-    end
-  end
-  Sound.platform_supported = true
+  require 'sound/device_library/mmlib'
+  require 'sound/format_library/mmlib'
+  Sound.device_library = Sound::DeviceLibrary::MMLib
+  Sound.format_library = Sound::FormatLibrary::MMLib
 elsif OS.linux?
   libasound_present = !(`which aplay`.eql? "")
-  unless libasound_present
+  if libasound_present
+    require 'sound/device_library/alsa'
+    require 'sound/format_library/alsa'
+    Sound.device_library = Sound::DeviceLibrary::ALSA
+    Sound.format_library = Sound::FormatLibrary::ALSA
+  else
     warn("warning: sound output requires libasound2, libasound2-dev, and alsa-utils packages")
   end
-  require 'sound/device_interface/alsa'
-  require 'sound/format_interface/alsa'
-  module Sound
-    class Device
-      include DeviceInterface::ALSA
-    end
-    class Format
-      include FormatInterface::ALSA
-    end
-  end
-  Sound.platform_supported = true
 else
+  Sound.device_library = Sound::DeviceLibrary::Base
+  Sound.format_library = Sound::FormatLibrary::Base
   warn("warning: Sound output not yet implemented for this platform: #{OS.os}")
+  Sound.platform_supported = false
 end
 
+require 'sound/device_library'
+require 'sound/format_library'
 require 'sound/device'
 require 'sound/data'
 require 'sound/format'

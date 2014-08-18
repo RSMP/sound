@@ -1,4 +1,4 @@
-require 'sound/device_interface'
+require 'sound/device_library'
 
 module Sound
   module Library
