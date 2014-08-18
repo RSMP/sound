@@ -177,6 +177,7 @@ module Sound
     #
     def flush!
       @queue = Device::Buffer.new
+      self
     end
     
     private

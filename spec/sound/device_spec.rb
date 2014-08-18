@@ -133,8 +133,58 @@ describe Sound::Device do
     context "when a device is closed" do
       it "informs the user that the device is already closed" do
         default_device.close
-        warning = "warning: device is already closed"
-        expect{default_device.close}.to output.to_stderr
+        warning = "warning: device is already closed\n"
+        expect{default_device.close}.to output(warning).to_stderr
+      end
+    end
+  end
+  describe "#close!" do
+    context "when a device is open" do
+      it "returns the device closed" do
+        expect(default_device.close!).to be_closed
+      end
+    end
+    context "when a device is closed" do
+      it "informs the user that the device is already closed" do
+        default_device.close!
+        warning = "warning: device is already closed\n"
+        expect{default_device.close}.to output(warning).to_stderr
+      end
+    end
+  end
+  describe "#flush!" do
+    context "buffer is empty" do
+      it "does nothing" do
+        expect(default_device.flush!.queue).to be_empty
+      end
+    end
+    context "buffer has one thing in it" do
+      let(:device) {Sound::Device.new.write(data)}
+      it "has an empty buffer" do
+        device.flush!
+        expect(device.queue).to be_empty
+      end
+      context "when the platform is not supported" do
+        it "outputs nothing" do
+          orig_support = Sound.platform_supported
+          Sound.platform_supported = false
+          expect{device.flush!}.not_to output.to_stderr
+          Sound.platform_supported = orig_support
+        end
+      end
+    end
+    context "buffer has many things in it" do
+      let(:device) {Sound::Device.new.write(data).write(data).write(data)}
+      it "has an empty buffer" do
+        device.flush!
+        expect(device.queue).to be_empty
+      end
+      context "and some of those things are async" do
+        let(:device) {Sound::Device.new.write(data).write_async(data).write_async(data)}
+        it "has an empty buffer" do
+          device.flush!
+          expect(device.queue).to be_empty
+        end
       end
     end
   end
