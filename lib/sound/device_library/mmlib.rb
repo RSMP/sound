@@ -117,8 +117,8 @@ module Sound
         
       end
       
-      def open_device(id)
-        waveOutOpen(handle.pointer, id, data.format.pointer, 0, 0, 0)
+      def open_device(device)
+        waveOutOpen(handle.pointer, device.id, data.format.pointer, 0, 0, 0)
       end
       
       def prepare_buffer

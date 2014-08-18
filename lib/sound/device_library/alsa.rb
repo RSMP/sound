@@ -52,9 +52,9 @@ module Sound
         end
       end
       
-      def open_device
+      def open_device(device)
         begin
-          snd_pcm_open(handle.pointer, id, 0, ASYNC)
+          snd_pcm_open(handle.pointer, device.id, 0, ASYNC)
         rescue NoDeviceError
           Sound.no_device = true
         end

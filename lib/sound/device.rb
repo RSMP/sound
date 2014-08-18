@@ -193,7 +193,7 @@ module Sound
     end
     
     def set_up
-      open_device(id)
+      open_device(self)
       prepare_buffer
       Thread.stop if Thread.current[:stop]
       Thread.pass if Thread.current[:async]
