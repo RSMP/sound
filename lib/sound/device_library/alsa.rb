@@ -90,6 +90,18 @@ module Sound
         Thread.current[:buffer_length] ||= data_buffer.size/2
       end
       
+      def handle
+        Thread.current[:handle] ||= Handle.new
+      end
+      
+      def data
+        Thread.current[:data] ||= Sound::Data.new
+      end
+      
+      def data_buffer
+        Thread.current[:data_buffer] ||= FFI::MemoryPointer.new(:int, data.pcm_data.size).write_array_of_int data.pcm_data
+      end
+      
       def set_params
           
           snd_pcm_hw_params_malloc(params_handle.pointer)
