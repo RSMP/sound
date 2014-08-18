@@ -1,4 +1,6 @@
 require 'spec_helper'
 
-describe Sound::DeviceLibrary::MMLib do
+if OS.windows?
+  describe Sound::DeviceLibrary::MMLib do
+  end
 end
