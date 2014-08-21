@@ -1,7 +1,7 @@
 sound
 =====
 [![Gem Version](https://badge.fury.io/rb/sound.svg)](http://badge.fury.io/rb/sound)
-[![Build Status](https://travis-ci.org/RSMP/sound.svg?branch=io)](https://travis-ci.org/RSMP/sound)
+[![Build Status](https://travis-ci.org/RSMP/sound.svg?branch=master)](https://travis-ci.org/RSMP/sound)
 [![Coverage Status](https://coveralls.io/repos/RSMP/sound/badge.png)](https://coveralls.io/r/RSMP/sound)
 [![Dependency Status](https://gemnasium.com/RSMP/sound.svg)](https://gemnasium.com/RSMP/sound)
 [![Code Climate](https://codeclimate.com/github/RSMP/sound/badges/gpa.svg)](https://codeclimate.com/github/RSMP/sound)
