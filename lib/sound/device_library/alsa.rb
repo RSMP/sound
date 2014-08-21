@@ -103,19 +103,40 @@ module Sound
       end
       
       def set_params
-          
-          snd_pcm_hw_params_malloc(params_handle.pointer)
-          snd_pcm_hw_params_any(handle.id, params_handle.id)
-          
-          snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
-          snd_pcm_hw_params_set_format(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
-          # need to change this to set_rate_near at some point
-          snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
-          snd_pcm_hw_params_set_channels(handle.id, params_handle.id, data.format.channels)
-          
-          snd_pcm_hw_params(handle.id, params_handle.id)
-          snd_pcm_hw_params_free(params_handle.id)
+        allocate_param_memory
+        alter_allocated_param_memory
+        free_param_memory
+      end
       
+      def allocate_param_memory
+        snd_pcm_hw_params_malloc(params_handle.pointer)
+      end
+      
+      def free_param_memory
+        snd_pcm_hw_params_free(params_handle.id)
+      end
+      
+      def alter_allocated_param_memory
+        set_up_to_change_any_params
+        modify_desired_params
+        set_params_on_hw_buffer
+      end
+      
+      def set_up_to_change_any_params
+        snd_pcm_hw_params_any(handle.id, params_handle.id)
+      end
+      
+      def modify_desired_params
+        # I think these can happen in any order
+        snd_pcm_hw_params_set_access(handle.id, params_handle.id, SND_PCM_ACCESS_RW_INTERLEAVED)
+        snd_pcm_hw_params_set_format(handle.id, params_handle.id, SND_PCM_FORMAT_S16_LE)
+         # need to change this to set_rate_near at some point
+        snd_pcm_hw_params_set_rate(handle.id, params_handle.id, data.format.sample_rate, 0)
+        snd_pcm_hw_params_set_channels(handle.id, params_handle.id, data.format.channels)
+      end
+      
+      def set_params_on_hw_buffer
+        snd_pcm_hw_params(handle.id, params_handle.id)
       end
       
       SND_PCM_ASYNC = 2
