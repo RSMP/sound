@@ -30,13 +30,13 @@ With some sensible defaults, the previous example can be written in one line:
 
 More can be seen in examples/example.rb
 
-The four main parts of this gem are Sound::Device, Sound::Format, Sound::Data,
-and Sound::DeviceInterface.  I haven't implented DeviceInterface quite yet, but
-Sound::Win32 and Sound::ALSA are going to become it.  That way more platforms
-can be added easily.  Obviously the only Data object that can be made is a sine
-wave (albeit two different ways), but that will grow into more data types like
-midi sequences and data pulled from audio files.  As for Format, well that will
-just be PCM or MIDI for now, but that may evolve too.
+The three main parts of this gem are Sound::Device, Sound::Format, Sound::Data.
+That way more platforms can be added easily by interacting with DeviceLibrary.
+Obviously the only Data object that can be made is a sine wave (albeit two
+different ways), but that will grow into more data types like midi sequences and
+data pulled from audio files.  As for Format, well that will just be PCM or MIDI
+for now, but that may evolve too.
 
-Come back for more features in the future including more data
-types (loading from files, other wave types), and new formats (midi).
+Come back for more features in the future including more data types (loading
+from files, other wave types), more platforms (MacOS is next on the list) and
+new formats (midi).
