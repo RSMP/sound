@@ -22,7 +22,9 @@ And then in irb or some script:
     device.write data
     device.close
     
-This will work on both windows and linux.
+This will work on both windows and linux.  However Linux platforms will need
+to install the libasound and libasound-dev packages.  You may already have
+these installed.
 
 With some sensible defaults, the previous example can be written in one line:
 
