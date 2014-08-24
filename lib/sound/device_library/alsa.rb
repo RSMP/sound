@@ -40,7 +40,7 @@ module Sound
       attach_function :snd_pcm_hw_params, [:pointer, :pointer], :int
       attach_function :snd_pcm_hw_params_free, [:pointer], :void
       
-      def self.snd_pcm_open(*args)
+      def snd_pcm_preopen(*args)
         output = `aplay -l 2>&1`
         if output.match(/no soundcard/m)
           raise NoDeviceError, "No sound devices present"
@@ -54,7 +54,7 @@ module Sound
       
       def open_device(device)
         begin
-          self.snd_pcm_open(handle.pointer, device.id, 0, ASYNC)
+          snd_pcm_preopen(handle.pointer, device.id, 0, ASYNC)
         rescue NoDeviceError
           Sound.no_device = true
         end
