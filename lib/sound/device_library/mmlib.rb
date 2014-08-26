@@ -138,6 +138,8 @@ module Sound
       def close_device
         waveOutClose(handle.id)
       end
+
+      private
       
       def handle
         Thread.current[:handle] ||= Handle.new
