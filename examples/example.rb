@@ -61,17 +61,6 @@ threads << Thread.new do
     device.write Sound::Data.new.sine_wave(440*2**(0/12.0), 150, 0.4)
     device.write Sound::Data.new.sine_wave(440*2**(2/12.0), 150, 0.4)
     device.write Sound::Data.new.sine_wave(440*2**(0/12.0), 1200, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(9/12.0), 1200, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(7/12.0), 600, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(12/12.0), 600, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(7/12.0), 600, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(5/12.0), 70, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(7/12.0), 70, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(5/12.0), 70, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(7/12.0), 70, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(5/12.0), 170, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(4/12.0), 150, 0.4)
-    device.write Sound::Data.new.sine_wave(440*2**(4/12.0), 1200, 0.4)
     Thread.pass
     Thread.pass
   end
@@ -99,25 +88,6 @@ threads << Thread.new do
     device.write Sound::Data.new.sine_wave(220*2**(4/12.0), 300, 0.4)
     device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
     
-    device.write Sound::Data.new.sine_wave(220*2**(0/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(9/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(5/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(9/12.0), 300, 0.4)
-    
-    device.write Sound::Data.new.sine_wave(220*2**(0/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(4/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
-    
-    device.write Sound::Data.new.sine_wave(220*2**(-1/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(5/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
-    
-    device.write Sound::Data.new.sine_wave(220*2**(0/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(4/12.0), 300, 0.4)
-    device.write Sound::Data.new.sine_wave(220*2**(7/12.0), 300, 0.4)
     Thread.pass
   end
 end
