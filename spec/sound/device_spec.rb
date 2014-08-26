@@ -161,9 +161,9 @@ describe Sound::Device do
     end
     context "when a device is closed" do
       it "informs the user that the device is already closed" do
-        default_device.close!
+        default_device.close
         warning = "warning: device is already closed\n"
-        expect{default_device.close}.to output(warning).to_stderr
+        expect{default_device.close!}.to output(warning).to_stderr
       end
     end
   end
