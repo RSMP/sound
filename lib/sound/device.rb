@@ -2,7 +2,6 @@
 module Sound
   
   class Device
-    include DeviceLibrary
     
     class Buffer < Array
       attr_accessor :force
@@ -12,6 +11,11 @@ module Sound
     end
   
     attr_reader :status, :id
+
+    @library = Sound.device_library
+    class << self
+      attr_accessor :library
+    end
     
     # creates a new device for writing by default.  default id is set by
     # whatever device interface was included (Win32 or ALSA, e.g.)
@@ -96,11 +100,7 @@ module Sound
         warn("warning: cannot write to a closed device")
       else
         @mutex.lock
-        @queue << Thread.new do
-          Thread.current[:async] = false
-          Thread.current[:data] = data
-          write_thread
-        end
+        @queue << new_write_thread_for(data)
         @mutex.unlock
         puts "writing to queue of device '#{id}': #{data}" if Sound.verbose
       end
@@ -117,9 +117,9 @@ module Sound
         @mutex.lock
         @queue.force = force_new
         if @queue.new_block
-          @queue << [new_async_thread_for(data)]
+          @queue << [new_write_thread_for(data, true)]
         else
-          @queue.last << new_async_thread_for(data)
+          @queue.last << new_write_thread_for(data, true)
         end
         @mutex.unlock
         puts "writing async to queue of device '#{id}': #{data}" if Sound.verbose
@@ -186,7 +186,7 @@ module Sound
       Thread.current[:stop] = true if Thread.current[:stop].nil?
       if Sound.platform_supported
         set_up
-        write_to_device
+        Device.library.write_to_device
         tear_down
       else
         warn("warning: playback is not yet supported on this platform")
@@ -194,20 +194,20 @@ module Sound
     end
     
     def set_up
-      open_device(self)
-      prepare_buffer
+      Device.library.open_device(self)
+      Device.library.prepare_buffer
       Thread.stop if Thread.current[:stop]
       Thread.pass if Thread.current[:async]
     end
     
     def tear_down
-      unprepare_buffer
-      close_device
+      Device.library.unprepare_buffer
+      Device.library.close_device
     end
     
-    def new_async_thread_for(data)
+    def new_write_thread_for(data, async = false)
       Thread.new do
-        Thread.current[:async] = true
+        Thread.current[:async] = async
         Thread.current[:data] = data
         write_thread
       end

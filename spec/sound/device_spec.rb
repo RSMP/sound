@@ -12,8 +12,17 @@ require 'spec_helper'
 #  you can write any Data to it
 #  it has a identification
 describe Sound::Device do
-  let(:data) {Sound::Data.new.sine_wave(440, 10, 0)}
+  let(:data) {double('data')}
+  let(:library) {double('library')}
   let(:default_device) {Sound::Device.new}
+  before do
+    library.stub(:open_device)
+    library.stub(:prepare_buffer)
+    library.stub(:write_to_device)
+    library.stub(:unprepare_buffer)
+    library.stub(:close_device)
+    Sound::Device.library = library
+  end
   it "has an id" do
     expect(default_device.id)
     if OS.linux?
@@ -82,6 +91,12 @@ describe Sound::Device do
     end
   end
   describe "#flush" do
+    before do
+      format = double('format')
+      pointer = double('pointer')
+      format.stub(:pointer).and_return pointer
+      data.stub(:format).and_return format
+    end
     context "buffer is empty" do
       it "does nothing" do
         expect(default_device.flush).to be_nil
