@@ -62,7 +62,7 @@ describe Sound::Device do
       expect(default_device.queue.length).to eq 0
     end
     it "cannot be written to directly" do
-      expect{device.queue << Thread.new {} }.to raise_error
+      expect{default_device.queue << Thread.new {} }.to raise_error(RuntimeError)
     end
   end
   describe "#write" do
