@@ -104,7 +104,7 @@ describe OS do
       it "raises an error" do
         old_host = RbConfig::CONFIG['host_os'].dup
         RbConfig::CONFIG['host_os'] = 'abcd'
-        expect{OS.host_os}.to raise_error
+        expect{OS.host_os}.to raise_error(OS::UnknownOSError)
         RbConfig::CONFIG['host_os'] = old_host
       end
     end
