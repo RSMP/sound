@@ -1,5 +1,7 @@
 module OS
 
+  class UnknownOSError < StandardError; end
+
   class << self
     attr_accessor :os
   end
@@ -35,7 +37,7 @@ module OS
     when /solaris|bsd/
       :unix
     else
-      raise Error::WebDriverError, "unknown os: #{RbConfig::CONFIG['host_os'].inspect}"
+      raise UnknownOSError, "unknown os: #{RbConfig::CONFIG['host_os'].inspect}"
     end
   end
 
