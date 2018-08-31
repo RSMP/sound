@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
     "lib/sound/format_library/base.rb",
     "lib/sound/format_library/mmlib.rb"
   ]
-  spec.add_runtime_dependency 'ffi', '= 1.3.1'
+  spec.add_runtime_dependency 'ffi', '= 1.9.25'
   spec.add_development_dependency 'rspec', '~> 3.0', '>=3.0.0'
   
   spec.homepage = 'https://github.com/RSMP/sound'
